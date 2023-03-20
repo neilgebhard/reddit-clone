@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import { Inter } from 'next/font/google'
+import posts from '../data.json'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -13,8 +14,23 @@ export default function Home() {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <main className={inter.className}>
-        <h1>Reddit Clone</h1>
+        {posts.map((post, i) => {
+          return <Post key={i} {...post} />
+        })}
       </main>
     </>
+  )
+}
+
+function Post({ postedBy, title, subreddit, upvotes, comments }) {
+  return (
+    <article className='flex'>
+      <div>{upvotes}</div>
+      <div>
+        <div>Posted by u/{postedBy}</div>
+        <div>{title}</div>
+        <div>{comments.length} comments</div>
+      </div>
+    </article>
   )
 }
