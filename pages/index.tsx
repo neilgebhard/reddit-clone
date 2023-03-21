@@ -1,6 +1,13 @@
 import Head from 'next/head'
 import { Inter } from 'next/font/google'
 import posts from '../data.json'
+import {
+  TbArrowBigUp,
+  TbArrowBigUpFilled,
+  TbArrowBigDown,
+  TbArrowBigDownFilled,
+} from 'react-icons/tb'
+import { GoComment } from 'react-icons/go'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -13,10 +20,12 @@ export default function Home() {
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <main className={inter.className}>
-        {posts.map((post, i) => {
-          return <Post key={i} {...post} />
-        })}
+      <main className={`px-3 ${inter.className}`}>
+        <div className='max-w-4xl mx-auto mt-5'>
+          {posts.map((post, i) => {
+            return <Post key={i} {...post} />
+          })}
+        </div>
       </main>
     </>
   )
@@ -24,12 +33,23 @@ export default function Home() {
 
 function Post({ postedBy, title, subreddit, upvotes, comments }) {
   return (
-    <article className='flex'>
-      <div>{upvotes}</div>
-      <div>
-        <div>Posted by u/{postedBy}</div>
-        <div>{title}</div>
-        <div>{comments.length} comments</div>
+    <article className='flex bg-white rounded-md border border-neutral-300 hover:border-neutral-500 cursor-pointer overflow-hidden'>
+      <div className='flex flex-col font-bold text-sm bg-neutral-50 p-3'>
+        <TbArrowBigUp size={25} />
+        <div>{upvotes}</div>
+        <TbArrowBigDown size={25} />
+      </div>
+      <div className='p-3 space-y-1'>
+        <div className='flex text-sm gap-2'>
+          <div className='font-semibold hover:underline'>r/{subreddit}</div>
+          <div className='text-neutral-500 font-extralight'>
+            Posted by u/{postedBy}
+          </div>
+        </div>
+        <h2 className='text-lg font-semibold'>{title}</h2>
+        <div className='inline-flex items-center gap-1 text-neutral-500 font-semibold text-sm hover:underline'>
+          <GoComment size={15} /> {comments.length} comments
+        </div>
       </div>
     </article>
   )
