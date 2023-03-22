@@ -1,19 +1,26 @@
+import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabaseClient'
+// import { supabase } from '@/lib/supabaseClient'
+import { useRouter } from 'next/router'
 
 export default function Login() {
+  const router = useRouter()
+  const supabaseClient = useSupabaseClient()
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
     const email = e.target.elements.email.value
     const password = e.target.elements.password.value
 
-    let { data, error } = await supabase.auth.signInWithPassword({
+    let { data, error } = await supabaseClient.auth.signInWithPassword({
       email,
       password,
     })
 
     console.log(data, error)
+
+    router.push('/')
   }
 
   return (
