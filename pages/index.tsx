@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import { Inter } from 'next/font/google'
+import { useSession } from '@supabase/auth-helpers-react'
 import posts from '../data.json'
 import {
   TbArrowBigUp,
@@ -8,10 +9,13 @@ import {
   TbArrowBigDownFilled,
 } from 'react-icons/tb'
 import { GoComment } from 'react-icons/go'
+import Link from 'next/link'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
+  const session = useSession()
+
   return (
     <>
       <Head>
@@ -22,6 +26,14 @@ export default function Home() {
       </Head>
       <main className={`px-3 ${inter.className}`}>
         <div className='max-w-4xl mx-auto mt-5'>
+          {session && (
+            <Link
+              className='inline-block text-blue-600 hover:underline mb-3'
+              href='/create-post'
+            >
+              + Post something
+            </Link>
+          )}
           {posts.map((post, i) => {
             return <Post key={i} {...post} />
           })}

@@ -13,12 +13,7 @@ export default function Dropdown() {
 
   const handleSignOut = async () => {
     let { error } = await supabaseClient.auth.signOut()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    console.log(user)
     router.push('/')
-    console.log(error)
   }
 
   return (

@@ -1,11 +1,16 @@
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import Link from 'next/link'
-// import { supabase } from '@/lib/supabaseClient'
 import { useRouter } from 'next/router'
+import { useEffect, useRef } from 'react'
 
 export default function Login() {
   const router = useRouter()
   const supabaseClient = useSupabaseClient()
+  const ref = useRef()
+
+  useEffect(() => {
+    ref.current.focus()
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -38,6 +43,7 @@ export default function Login() {
             className='block border rounded-full w-full border-neutral-300 text-xl px-5 py-1 mb-5'
             id='email'
             type='text'
+            ref={ref}
           />
           <label
             className='font-semibold uppercase text-sm text-neutral-600'
