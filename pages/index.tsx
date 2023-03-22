@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import { Inter } from 'next/font/google'
 import { useSession } from '@supabase/auth-helpers-react'
-import posts from '../data.json'
+// import posts from '../data.json'
 import {
   TbArrowBigUp,
   TbArrowBigUpFilled,
@@ -10,10 +10,23 @@ import {
 } from 'react-icons/tb'
 import { GoComment } from 'react-icons/go'
 import Link from 'next/link'
+import { supabase } from '@/lib/supabaseClient'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function Home() {
+export const getServerSideProps = async () => {
+  let { data: posts } = await supabase.from('posts').select(`
+    *, profiles(*)
+  `)
+  console.log(posts)
+
+  return {
+    props: { posts },
+  }
+}
+
+export default function Home({ posts }) {
+  console.log(posts)
   const session = useSession()
 
   return (
@@ -53,15 +66,15 @@ function Post({ postedBy, title, subreddit, upvotes, comments }) {
       </div>
       <div className='p-3 space-y-1'>
         <div className='flex text-sm gap-2'>
-          <div className='font-semibold hover:underline'>r/{subreddit}</div>
+          {/* <div className='font-semibold hover:underline'>r/{subreddit}</div> */}
           <div className='text-neutral-500 font-extralight'>
             Posted by u/{postedBy}
           </div>
         </div>
         <h2 className='text-lg font-semibold'>{title}</h2>
-        <div className='inline-flex items-center gap-1 text-neutral-500 font-semibold text-sm hover:underline'>
+        {/* <div className='inline-flex items-center gap-1 text-neutral-500 font-semibold text-sm hover:underline'>
           <GoComment size={15} /> {comments.length} comments
-        </div>
+        </div> */}
       </div>
     </article>
   )
