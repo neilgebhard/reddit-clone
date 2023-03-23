@@ -2,22 +2,40 @@ import { supabase } from '@/lib/supabaseClient'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+import { useSupabaseClient } from '@supabase/auth-helpers-react'
 
 export default function Signup() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const supabaseClient = useSupabaseClient()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
     const email = e.target.elements.email.value
     const password = e.target.elements.password.value
+    const username = e.target.elements.username.value
 
     setLoading(true)
     let { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: { username },
+      },
     })
+
+    console.log(data)
+
+    // if(error) {
+    //   setErrorMessage(error.message)
+    // } else {
+    //   if(data?.user?.identities?.length === 0){
+    //     setErrorMessage("User with email already exists")
+    //   } else {
+    //     window.location.href = 'dashboard'
+    //   }
+    // }
 
     setLoading(false)
 
@@ -33,6 +51,17 @@ export default function Signup() {
       <div className='max-w-md mx-auto bg-white p-12 rounded-2xl'>
         <h2 className='text-xl font-semibold mb-5'>Sign Up</h2>
         <form onSubmit={handleSubmit}>
+          <label
+            className='font-semibold uppercase text-sm text-neutral-600'
+            htmlFor='username'
+          >
+            Username
+          </label>
+          <input
+            className='block border rounded-full w-full border-neutral-300 text-xl px-5 py-1 mb-5'
+            id='username'
+            type='text'
+          />
           <label
             className='font-semibold uppercase text-sm text-neutral-600'
             htmlFor='email'

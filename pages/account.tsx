@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
+import { useState } from 'react'
 
 // TODO: Add notification after update - "Profile updated!"
 
@@ -11,18 +12,14 @@ export const getServerSideProps = async (ctx) => {
   } = await supabase.auth.getSession()
 
   if (session) {
-    let {
-      data: profile,
-      error,
-      status,
-    } = await supabase
+    let { data, error, status } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', session.user.id)
       .single()
 
     return {
-      props: { profile },
+      props: { data },
     }
   }
 
@@ -34,7 +31,8 @@ export const getServerSideProps = async (ctx) => {
   }
 }
 
-export default function Account({ profile }) {
+export default function Account({ data }) {
+  const [profile, setProfile] = useState(data)
   const session = useSession()
   const supabase = useSupabaseClient()
 
@@ -72,6 +70,7 @@ export default function Account({ profile }) {
               id='username'
               className='block border w-full rounded px-2 py-1'
               type='text'
+              defaultValue={profile.username}
             />
           </div>
           <div className='text-right'>
