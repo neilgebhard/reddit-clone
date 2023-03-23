@@ -57,7 +57,7 @@ export default function Home({ posts }) {
 
 function Post({ profiles, title, subreddit, upvotes, comments }) {
   return (
-    <article className='flex bg-white rounded-md border border-neutral-300 hover:border-neutral-500 cursor-pointer overflow-hidden'>
+    <article className='flex bg-white rounded-md mb-1 border border-neutral-300 hover:border-neutral-500 cursor-pointer overflow-hidden'>
       <div className='flex flex-col font-bold text-sm bg-neutral-50 p-3'>
         <TbArrowBigUp size={25} />
         <div>{upvotes}</div>

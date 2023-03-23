@@ -25,8 +25,6 @@ export default function Signup() {
       },
     })
 
-    console.log(data)
-
     // if(error) {
     //   setErrorMessage(error.message)
     // } else {
@@ -42,7 +40,7 @@ export default function Signup() {
     if (error) {
       console.error(error)
     } else {
-      router.push('/confirm')
+      router.push(`/confirm?email=${email}`)
     }
   }
 
