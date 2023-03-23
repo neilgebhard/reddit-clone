@@ -5,7 +5,6 @@ import UserDropdown from './UserDropdown'
 
 export default function Navbar() {
   const session = useSession()
-  console.log(session)
 
   return (
     <nav className='bg-white shadow-sm px-5 py-2 flex justify-between items-center'>

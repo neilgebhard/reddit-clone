@@ -26,7 +26,6 @@ export const getServerSideProps = async () => {
 }
 
 export default function Home({ posts }) {
-  console.log(posts)
   const session = useSession()
 
   return (
@@ -56,7 +55,7 @@ export default function Home({ posts }) {
   )
 }
 
-function Post({ postedBy, title, subreddit, upvotes, comments }) {
+function Post({ profiles, title, subreddit, upvotes, comments }) {
   return (
     <article className='flex bg-white rounded-md border border-neutral-300 hover:border-neutral-500 cursor-pointer overflow-hidden'>
       <div className='flex flex-col font-bold text-sm bg-neutral-50 p-3'>
@@ -68,7 +67,7 @@ function Post({ postedBy, title, subreddit, upvotes, comments }) {
         <div className='flex text-sm gap-2'>
           {/* <div className='font-semibold hover:underline'>r/{subreddit}</div> */}
           <div className='text-neutral-500 font-extralight'>
-            Posted by u/{postedBy}
+            Posted by u/{profiles.username}
           </div>
         </div>
         <h2 className='text-lg font-semibold'>{title}</h2>
