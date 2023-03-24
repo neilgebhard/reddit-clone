@@ -2,34 +2,41 @@ import { supabase } from '@/lib/supabaseClient'
 import { TbArrowBigDown, TbArrowBigUp } from 'react-icons/tb'
 import { formatTimeAgo } from '../../utils'
 import { useSession } from '@supabase/auth-helpers-react'
+import { useState } from 'react'
+import { useRouter } from 'next/router'
 
 export const getServerSideProps = async (context) => {
   const { id } = context.query
 
-  let { data: post } = await supabase
+  let { data } = await supabase
     .from('posts')
     .select('*, user:profiles(*), comments(*, user:profiles(*))')
     .eq('id', id)
     .single()
 
   return {
-    props: { post },
+    props: { data },
   }
 }
 
-const Post = ({ post }) => {
+const Post = ({ data }) => {
+  const [post, setPost] = useState(data)
   const { upvotes, user, title, created_at, comments } = post
   const relativeTime = formatTimeAgo(created_at)
   const session = useSession()
-
-  console.log(post)
+  const router = useRouter()
+  const { id } = router.query
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
     if (!session) throw new Error('User is not signed in.')
+
     const user_id = session.user.id
     const text = e.target.elements.text.value
+
     if (!text) return
+
     const { data, error } = await supabase.from('comments').insert([
       {
         user_id,
@@ -38,7 +45,18 @@ const Post = ({ post }) => {
         updated_at: new Date().toISOString(),
       },
     ])
-    console.log(data, error)
+
+    if (error) throw error
+
+    e.target.elements.text.value = ''
+
+    let { data: postData } = await supabase
+      .from('posts')
+      .select('*, user:profiles(*), comments(*, user:profiles(*))')
+      .eq('id', id)
+      .single()
+
+    setPost(postData)
   }
 
   return (
@@ -81,7 +99,7 @@ const Post = ({ post }) => {
           </div> */}
           </div>
         </article>
-        <div className='mt-3'>
+        <div className='mt-3 space-y-2'>
           {comments.map((comment) => {
             return <Comment key={comment.id} {...comment} />
           })}
