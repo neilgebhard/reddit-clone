@@ -11,6 +11,7 @@ import {
 import { GoComment } from 'react-icons/go'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabaseClient'
+import { formatTimeAgo } from '@/utils'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -55,7 +56,16 @@ export default function Home({ posts }) {
   )
 }
 
-function Post({ id, profiles, title, subreddit, upvotes, comments }) {
+function Post({
+  id,
+  profiles,
+  title,
+  subreddit,
+  upvotes,
+  comments,
+  created_at,
+}) {
+  const relativeTime = formatTimeAgo(new Date(created_at))
   return (
     <Link href={`/post/${id}`}>
       <article className='flex bg-white rounded-md mb-1 border border-neutral-300 hover:border-neutral-500 cursor-pointer overflow-hidden'>
@@ -68,7 +78,7 @@ function Post({ id, profiles, title, subreddit, upvotes, comments }) {
           <div className='flex text-sm gap-2'>
             {/* <div className='font-semibold hover:underline'>r/{subreddit}</div> */}
             <div className='text-neutral-500 font-extralight'>
-              Posted by u/{profiles.username}
+              Posted by u/{profiles.username} {relativeTime}
             </div>
           </div>
           <h2 className='text-lg font-semibold'>{title}</h2>
