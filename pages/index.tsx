@@ -55,26 +55,28 @@ export default function Home({ posts }) {
   )
 }
 
-function Post({ profiles, title, subreddit, upvotes, comments }) {
+function Post({ id, profiles, title, subreddit, upvotes, comments }) {
   return (
-    <article className='flex bg-white rounded-md mb-1 border border-neutral-300 hover:border-neutral-500 cursor-pointer overflow-hidden'>
-      <div className='flex flex-col font-bold text-sm bg-neutral-50 p-3'>
-        <TbArrowBigUp size={25} />
-        <div>{upvotes}</div>
-        <TbArrowBigDown size={25} />
-      </div>
-      <div className='p-3 space-y-1'>
-        <div className='flex text-sm gap-2'>
-          {/* <div className='font-semibold hover:underline'>r/{subreddit}</div> */}
-          <div className='text-neutral-500 font-extralight'>
-            Posted by u/{profiles.username}
-          </div>
+    <Link href={`/post/${id}`}>
+      <article className='flex bg-white rounded-md mb-1 border border-neutral-300 hover:border-neutral-500 cursor-pointer overflow-hidden'>
+        <div className='flex flex-col font-bold text-sm bg-neutral-50 p-3'>
+          <TbArrowBigUp size={25} />
+          <div>{upvotes}</div>
+          <TbArrowBigDown size={25} />
         </div>
-        <h2 className='text-lg font-semibold'>{title}</h2>
-        {/* <div className='inline-flex items-center gap-1 text-neutral-500 font-semibold text-sm hover:underline'>
-          <GoComment size={15} /> {comments.length} comments
-        </div> */}
-      </div>
-    </article>
+        <div className='p-3 space-y-1'>
+          <div className='flex text-sm gap-2'>
+            {/* <div className='font-semibold hover:underline'>r/{subreddit}</div> */}
+            <div className='text-neutral-500 font-extralight'>
+              Posted by u/{profiles.username}
+            </div>
+          </div>
+          <h2 className='text-lg font-semibold'>{title}</h2>
+          {/* <div className='inline-flex items-center gap-1 text-neutral-500 font-semibold text-sm hover:underline'>
+            <GoComment size={15} /> {comments.length} comments
+          </div> */}
+        </div>
+      </article>
+    </Link>
   )
 }
