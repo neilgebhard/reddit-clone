@@ -38,7 +38,7 @@ export default function Home({ posts }) {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <main className={`px-3 ${inter.className}`}>
-        <div className='max-w-4xl mx-auto mt-5'>
+        <div className='max-w-2xl mx-auto mt-5'>
           {session && (
             <Link
               className='inline-block text-blue-600 hover:underline mb-3'

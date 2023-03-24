@@ -13,7 +13,7 @@ const DIVISIONS = [
 ]
 
 export function formatTimeAgo(date) {
-  let duration = (date - new Date()) / 1000
+  let duration = (new Date(date) - new Date()) / 1000
 
   for (let i = 0; i < DIVISIONS.length; i++) {
     const division = DIVISIONS[i]
