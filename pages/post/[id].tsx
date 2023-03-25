@@ -4,6 +4,7 @@ import { formatTimeAgo } from '../../utils'
 import { useSession } from '@supabase/auth-helpers-react'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
+import { useSupabaseClient } from '@supabase/auth-helpers-react'
 
 export const getServerSideProps = async (context) => {
   const { id } = context.query
@@ -24,6 +25,7 @@ const Post = ({ data }) => {
   const session = useSession()
   const router = useRouter()
   const { id } = router.query
+  const supabaseClient = useSupabaseClient()
 
   const { upvotes, user, title, text, created_at, comments } = post
   const relativeTime = formatTimeAgo(created_at)
@@ -60,9 +62,9 @@ const Post = ({ data }) => {
     setPost(data)
   }
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (confirm('Are you sure you want to delete this post?')) {
-      await supabase
+      supabaseClient
         .from('posts')
         .delete()
         .eq('id', id)
@@ -110,7 +112,7 @@ const Post = ({ data }) => {
                       className='rounded-full border border-neutral-400 text-red-800 hover:border-neutral-600 px-4 py-1'
                       onClick={handleDelete}
                     >
-                      Delete
+                      Delete Post
                     </button>
                   </div>
                 )}
@@ -132,6 +134,20 @@ const Post = ({ data }) => {
 }
 
 function Comment({ id, updated_at, user, text }) {
+  const session = useSession()
+  const supabaseClient = useSupabaseClient()
+
+  const handleDelete = async () => {
+    if (confirm('Are you sure you want to delete this comment?')) {
+      const { data, error } = await supabaseClient
+        .from('comments')
+        .delete()
+        .eq('id', id)
+      if (error) throw error
+      window.location.reload()
+    }
+  }
+
   return (
     <div className='space-y-1 bg-white p-5 rounded'>
       <div className='text-sm'>
@@ -139,7 +155,17 @@ function Comment({ id, updated_at, user, text }) {
         <span className='text-neutral-400'>{formatTimeAgo(updated_at)}</span>
       </div>
       <div>{text}</div>
-      <div className='text-neutral-500 font-semibold text-sm'>Reply</div>
+      <div className='flex justify-between'>
+        <div className='text-neutral-500 font-semibold text-sm'>Reply</div>
+        {session?.user.id === user.id && (
+          <button
+            className='text-red-500 font-semibold text-sm hover:underline'
+            onClick={handleDelete}
+          >
+            Delete
+          </button>
+        )}
+      </div>
     </div>
   )
 }
