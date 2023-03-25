@@ -60,6 +60,16 @@ const Post = ({ data }) => {
     setPost(data)
   }
 
+  const handleDelete = async () => {
+    if (confirm('Are you sure you want to delete this post?')) {
+      await supabase
+        .from('posts')
+        .delete()
+        .eq('id', id)
+        .then(() => router.push('/'))
+    }
+  }
+
   return (
     <main className='px-3'>
       <div className='max-w-2xl mx-auto mt-5'>
@@ -94,6 +104,16 @@ const Post = ({ data }) => {
                     Comment
                   </button>
                 </div>
+                {session.user.id === user.id && (
+                  <div className='text-right mt-2'>
+                    <button
+                      className='rounded-full border border-neutral-400 text-red-800 hover:border-neutral-600 px-4 py-1'
+                      onClick={handleDelete}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
               </form>
             )}
             {/* <div className='inline-flex items-center gap-1 text-neutral-500 font-semibold text-sm hover:underline'>
