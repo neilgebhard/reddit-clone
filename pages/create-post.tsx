@@ -1,8 +1,10 @@
 import { supabase } from '@/lib/supabaseClient'
 import { useSession } from '@supabase/auth-helpers-react'
+import { useRouter } from 'next/router'
 
 export default function CreatePost() {
   const session = useSession()
+  const router = useRouter()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -13,8 +15,10 @@ export default function CreatePost() {
       const { data, error } = await supabase
         .from('posts')
         .insert([{ posted_by, title, text }])
+        .select()
+      if (error) throw error
+      router.push(`/post/${data[0].id}`)
     }
-    // TODO: route to the post
   }
 
   return (

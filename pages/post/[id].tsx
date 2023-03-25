@@ -21,11 +21,12 @@ export const getServerSideProps = async (context) => {
 
 const Post = ({ data }) => {
   const [post, setPost] = useState(data)
-  const { upvotes, user, title, created_at, comments } = post
-  const relativeTime = formatTimeAgo(created_at)
   const session = useSession()
   const router = useRouter()
   const { id } = router.query
+
+  const { upvotes, user, title, text, created_at, comments } = post
+  const relativeTime = formatTimeAgo(created_at)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -37,7 +38,7 @@ const Post = ({ data }) => {
 
     if (!text) return
 
-    const { data, error } = await supabase.from('comments').insert([
+    const { error } = await supabase.from('comments').insert([
       {
         user_id,
         post_id: post.id,
@@ -50,13 +51,13 @@ const Post = ({ data }) => {
 
     e.target.elements.text.value = ''
 
-    let { data: postData } = await supabase
+    let { data } = await supabase
       .from('posts')
       .select('*, user:profiles(*), comments(*, user:profiles(*))')
       .eq('id', id)
       .single()
 
-    setPost(postData)
+    setPost(data)
   }
 
   return (
@@ -75,7 +76,8 @@ const Post = ({ data }) => {
                 Posted by u/{user.username} {relativeTime}
               </div>
             </div>
-            <h2 className='text-lg font-semibold'>{title}</h2>
+            <h2 className='text-xl font-semibold my-1'>{title}</h2>
+            <div>{text}</div>
             {session && (
               <form className='mt-8' onSubmit={handleSubmit}>
                 <label className='text-sm font-light' htmlFor='text'>
