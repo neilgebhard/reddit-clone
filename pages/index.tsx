@@ -12,13 +12,16 @@ import { GoComment } from 'react-icons/go'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabaseClient'
 import { formatTimeAgo } from '@/utils'
+import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export const getServerSideProps = async () => {
-  let { data: posts } = await supabase.from('posts').select(`
-    *, profiles(*)
-  `)
+export const getServerSideProps = async (ctx) => {
+  // const supabase = createServerSupabaseClient(ctx)
+  const { data: posts } = await supabase
+    .from('posts')
+    .select('*, user:posted_by(*)')
+
   console.log(posts)
 
   return {
@@ -56,15 +59,7 @@ export default function Home({ posts }) {
   )
 }
 
-function Post({
-  id,
-  profiles,
-  title,
-  subreddit,
-  upvotes,
-  comments,
-  created_at,
-}) {
+function Post({ id, user, title, subreddit, upvotes, comments, created_at }) {
   const relativeTime = formatTimeAgo(new Date(created_at))
   return (
     <Link href={`/post/${id}`}>
@@ -78,7 +73,7 @@ function Post({
           <div className='flex text-sm gap-2'>
             {/* <div className='font-semibold hover:underline'>r/{subreddit}</div> */}
             <div className='text-neutral-500 font-extralight'>
-              Posted by u/{profiles.username} {relativeTime}
+              Posted by u/{user.username} {relativeTime}
             </div>
           </div>
           <h2 className='text-lg font-semibold'>{title}</h2>

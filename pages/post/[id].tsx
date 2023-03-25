@@ -11,7 +11,9 @@ export const getServerSideProps = async (context) => {
 
   let { data } = await supabase
     .from('posts')
-    .select('*, user:profiles(*), comments(*, user:profiles(*))')
+    .select(
+      '*, comment_votes(*), user:posted_by(*), comments(*, user:user_id(*))'
+    )
     .eq('id', id)
     .single()
 
@@ -27,7 +29,7 @@ const Post = ({ data }) => {
   const { id } = router.query
   const supabaseClient = useSupabaseClient()
 
-  const { upvotes, user, title, text, created_at, comments } = post
+  const { comment_votes, user, title, text, created_at, comments } = post
   const relativeTime = formatTimeAgo(created_at)
 
   const handleSubmit = async (e) => {
@@ -55,9 +57,13 @@ const Post = ({ data }) => {
 
     let { data } = await supabase
       .from('posts')
-      .select('*, user:profiles(*), comments(*, user:profiles(*))')
+      .select(
+        '*, comment_votes(*), user:posted_by(*), comments(*, user:user_id(*))'
+      )
       .eq('id', id)
       .single()
+
+    console.log(data)
 
     setPost(data)
   }
@@ -78,7 +84,7 @@ const Post = ({ data }) => {
         <article className='flex bg-white rounded-md mb-1 border border-neutral-300 overflow-hidden'>
           <div className='flex flex-col font-bold text-sm bg-neutral-50 p-3'>
             <TbArrowBigUp size={25} />
-            <div>{upvotes}</div>
+            <div>{comment_votes.length}</div>
             <TbArrowBigDown size={25} />
           </div>
           <div className='p-3 grow'>

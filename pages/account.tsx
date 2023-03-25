@@ -2,8 +2,6 @@ import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
 import { useState } from 'react'
 
-// TODO: Add notification after update - "Profile updated!"
-
 export const getServerSideProps = async (ctx) => {
   const supabase = createServerSupabaseClient(ctx)
 
