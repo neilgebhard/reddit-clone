@@ -1,24 +1,18 @@
 import Head from 'next/head'
 import { Inter } from 'next/font/google'
 import { useSession } from '@supabase/auth-helpers-react'
-// import posts from '../data.json'
-import {
-  TbArrowBigUp,
-  TbArrowBigUpFilled,
-  TbArrowBigDown,
-  TbArrowBigDownFilled,
-} from 'react-icons/tb'
-import { GoComment } from 'react-icons/go'
+import { FaRegComment } from 'react-icons/fa'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabaseClient'
 import { formatTimeAgo } from '@/utils'
+import Upvotes from '@/components/Upvotes'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const getServerSideProps = async (ctx) => {
   const { data: posts } = await supabase
     .from('posts')
-    .select('*, user:posted_by(*)')
+    .select('*, post_votes(*), user:posted_by(*), comments(*, user:user_id(*))')
 
   return {
     props: { posts },
@@ -55,17 +49,21 @@ export default function Home({ posts }) {
   )
 }
 
-function Post({ id, user, title, subreddit, upvotes, comments, created_at }) {
+function Post({
+  id,
+  user,
+  title,
+  subreddit,
+  comments,
+  created_at,
+  post_votes,
+}) {
   const relativeTime = formatTimeAgo(new Date(created_at))
   return (
-    <Link href={`/post/${id}`}>
-      <article className='flex bg-white rounded-md mb-1 border border-neutral-300 hover:border-neutral-500 cursor-pointer overflow-hidden'>
-        <div className='flex flex-col font-bold text-sm bg-neutral-50 p-3'>
-          <TbArrowBigUp size={25} />
-          <div>{upvotes}</div>
-          <TbArrowBigDown size={25} />
-        </div>
-        <div className='p-3 space-y-1'>
+    <article className='flex bg-white rounded-md mb-1 border border-neutral-300 hover:border-neutral-500 cursor-pointer overflow-hidden'>
+      <Upvotes id={id} votes={post_votes} />
+      <Link className='grow' href={`/post/${id}`}>
+        <div className='p-3 space-y-1 h-full'>
           <div className='flex text-sm gap-2'>
             {/* <div className='font-semibold hover:underline'>r/{subreddit}</div> */}
             <div className='text-neutral-500 font-extralight'>
@@ -73,11 +71,11 @@ function Post({ id, user, title, subreddit, upvotes, comments, created_at }) {
             </div>
           </div>
           <h2 className='text-lg font-semibold'>{title}</h2>
-          {/* <div className='inline-flex items-center gap-1 text-neutral-500 font-semibold text-sm hover:underline'>
-            <GoComment size={15} /> {comments.length} comments
-          </div> */}
+          <div className='inline-flex items-center gap-1 text-neutral-500 font-semibold text-sm hover:underline'>
+            <FaRegComment size={15} /> {comments.length} comments
+          </div>
         </div>
-      </article>
-    </Link>
+      </Link>
+    </article>
   )
 }
