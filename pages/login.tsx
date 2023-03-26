@@ -23,8 +23,6 @@ export default function Login() {
       password,
     })
 
-    console.log(data, error)
-
     router.push('/')
   }
 

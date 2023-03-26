@@ -3,7 +3,6 @@ import { Fragment } from 'react'
 import { GoChevronDown } from 'react-icons/go'
 import { FaRegUserCircle } from 'react-icons/fa'
 import { BiLogOut } from 'react-icons/bi'
-import { supabase } from '@/lib/supabaseClient'
 import { useRouter } from 'next/router'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 

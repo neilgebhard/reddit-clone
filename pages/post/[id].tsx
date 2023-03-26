@@ -1,8 +1,13 @@
 import { supabase } from '@/lib/supabaseClient'
-import { TbArrowBigDown, TbArrowBigUp } from 'react-icons/tb'
+import {
+  TbArrowBigDown,
+  TbArrowBigUp,
+  TbArrowBigUpFilled,
+  TbArrowBigDownFilled,
+} from 'react-icons/tb'
 import { formatTimeAgo } from '../../utils'
 import { useSession } from '@supabase/auth-helpers-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 
@@ -29,7 +34,15 @@ const Post = ({ data }) => {
   const { id } = router.query
   const supabaseClient = useSupabaseClient()
 
-  const { comment_votes, user, title, text, created_at, comments } = post
+  const {
+    id: postId,
+    comment_votes,
+    user,
+    title,
+    text,
+    created_at,
+    comments,
+  } = post
   const relativeTime = formatTimeAgo(created_at)
 
   const handleSubmit = async (e) => {
@@ -63,8 +76,6 @@ const Post = ({ data }) => {
       .eq('id', id)
       .single()
 
-    console.log(data)
-
     setPost(data)
   }
 
@@ -82,11 +93,7 @@ const Post = ({ data }) => {
     <main className='px-3'>
       <div className='max-w-2xl mx-auto mt-5'>
         <article className='flex bg-white rounded-md mb-1 border border-neutral-300 overflow-hidden'>
-          <div className='flex flex-col font-bold text-sm bg-neutral-50 p-3'>
-            <TbArrowBigUp size={25} />
-            <div>{comment_votes.length}</div>
-            <TbArrowBigDown size={25} />
-          </div>
+          <Upvotes id={postId} votes={comment_votes} />
           <div className='p-3 grow'>
             <div className='flex text-sm gap-2'>
               {/* <div className='font-semibold hover:underline'>r/{subreddit}</div> */}
@@ -139,6 +146,8 @@ const Post = ({ data }) => {
   )
 }
 
+export default Post
+
 function Comment({ id, updated_at, user, text }) {
   const session = useSession()
   const supabaseClient = useSupabaseClient()
@@ -176,4 +185,82 @@ function Comment({ id, updated_at, user, text }) {
   )
 }
 
-export default Post
+function Upvotes({ id, votes }) {
+  const supabaseClient = useSupabaseClient()
+  const session = useSession()
+
+  const [isUpvoted, setIsUpvoted] = useState(false)
+  const [isDownvoted, setIsDownvoted] = useState(false)
+  const [total, setTotal] = useState(() =>
+    votes.reduce((acc, curr) => (curr.is_upvote ? acc + 1 : acc - 1), 0)
+  )
+
+  useEffect(() => {
+    setIsUpvoted(
+      votes.some((v) => v.user_id === session?.user.id && v.is_upvote === true)
+    )
+    setIsDownvoted(
+      votes.some((v) => v.user_id === session?.user.id && v.is_upvote === false)
+    )
+  }, [session?.user.id])
+
+  const handleUpvote = async () => {
+    if (!session) throw new Error('No user')
+    if (isUpvoted) {
+      setIsUpvoted(false)
+      setTotal((prev) => prev - 1)
+      const { id } = votes.find((v) => v.user_id === session.user.id)
+      await supabaseClient.from('comment_votes').delete().eq('id', id)
+    } else {
+      setTotal((prev) => (isDownvoted ? prev + 2 : prev + 1))
+      setIsUpvoted(true)
+      setIsDownvoted(false)
+      const { data, error } = await supabaseClient
+        .from('comment_votes')
+        .upsert({ post_id: id, user_id: session.user.id, is_upvote: true })
+        .select()
+      if (error) throw error
+      votes.unshift(data[0])
+    }
+  }
+
+  const handleDownvote = async () => {
+    if (!session) throw new Error('No user')
+    if (isDownvoted) {
+      setIsDownvoted(false)
+      setTotal((prev) => prev + 1)
+      const { id } = votes.find((v) => v.user_id === session.user.id)
+      await supabaseClient.from('comment_votes').delete().eq('id', id)
+    } else {
+      setTotal((prev) => (isUpvoted ? prev - 2 : prev - 1))
+      setIsUpvoted(false)
+      setIsDownvoted(true)
+      const { data, error } = await supabaseClient
+        .from('comment_votes')
+        .upsert({ post_id: id, user_id: session.user.id, is_upvote: false })
+        .select()
+      if (error) throw error
+      votes.unshift(data[0])
+    }
+  }
+
+  return (
+    <div className='flex flex-col items-center font-bold text-sm bg-neutral-50 p-3'>
+      <button onClick={handleUpvote}>
+        {isUpvoted ? (
+          <TbArrowBigUpFilled className='text-2xl text-orange-600' />
+        ) : (
+          <TbArrowBigUp className='text-2xl' />
+        )}
+      </button>
+      <div>{total}</div>
+      <button onClick={handleDownvote}>
+        {isDownvoted ? (
+          <TbArrowBigDownFilled className='text-2xl text-orange-600' />
+        ) : (
+          <TbArrowBigDown className='text-2xl' />
+        )}
+      </button>
+    </div>
+  )
+}

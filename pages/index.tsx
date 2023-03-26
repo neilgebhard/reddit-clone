@@ -12,17 +12,13 @@ import { GoComment } from 'react-icons/go'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabaseClient'
 import { formatTimeAgo } from '@/utils'
-import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const getServerSideProps = async (ctx) => {
-  // const supabase = createServerSupabaseClient(ctx)
   const { data: posts } = await supabase
     .from('posts')
     .select('*, user:posted_by(*)')
-
-  console.log(posts)
 
   return {
     props: { posts },

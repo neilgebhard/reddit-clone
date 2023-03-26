@@ -1,10 +1,12 @@
-import { supabase } from '@/lib/supabaseClient'
+// import { supabase } from '@/lib/supabaseClient'
 import { useSession } from '@supabase/auth-helpers-react'
 import { useRouter } from 'next/router'
+import { useSupabaseClient } from '@supabase/auth-helpers-react'
 
 export default function CreatePost() {
   const session = useSession()
   const router = useRouter()
+  const supabase = useSupabaseClient()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
