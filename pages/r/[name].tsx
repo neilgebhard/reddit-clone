@@ -6,13 +6,21 @@ import Upvotes from '@/components/Upvotes'
 import { formatTimeAgo } from '@/utils'
 import { FaRegComment } from 'react-icons/fa'
 
-export const getServerSideProps = async () => {
+export const getServerSideProps = async (context) => {
+  const { name } = context.query
   const [posts, subreddits] = await Promise.all([
     supabase
-      .from('posts')
+      .from('subreddits')
       .select(
-        '*, post_votes(*), user:posted_by(*), comments(*, user:user_id(*)), subreddit(*)'
-      ),
+        `
+        *, 
+        posts(*, 
+            post_votes(*),
+            user:posted_by(*), 
+            comments(*, user:user_id(*)),
+            subreddit(*))`
+      )
+      .eq('name', name),
     supabase.from('subreddits').select('*'),
   ])
 
@@ -45,7 +53,7 @@ export default function Home({ posts, subreddits }) {
           <div className='flex gap-2'>
             <div className='max-w-2xl grow'>
               <ul>
-                {posts.map((post, i) => {
+                {posts[0].posts.map((post, i) => {
                   return <Post key={i} {...post} />
                 })}
               </ul>
@@ -74,12 +82,9 @@ function Post({
       <Link className='grow' href={`/post/${id}`}>
         <div className='p-3 space-y-1 h-full'>
           <div className='flex text-sm gap-2'>
-            <Link
-              href={`/r/${subreddit.name}`}
-              className='font-semibold hover:underline'
-            >
+            <div className='font-semibold hover:underline'>
               r/{subreddit.name}
-            </Link>
+            </div>
             <div className='text-neutral-500 font-extralight'>
               Posted by u/{user.username} {relativeTime}
             </div>
