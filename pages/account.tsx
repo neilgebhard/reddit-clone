@@ -2,8 +2,8 @@ import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
 import { useState } from 'react'
 
-export const getServerSideProps = async (ctx) => {
-  const supabase = createServerSupabaseClient(ctx)
+export const getServerSideProps = async (context) => {
+  const supabase = createServerSupabaseClient(context)
 
   const {
     data: { session },
@@ -39,7 +39,7 @@ export default function Account({ data }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (!session) throw new Error('No user')
+    if (!session) throw new Error('User not signed in.')
 
     try {
       setLoading(true)

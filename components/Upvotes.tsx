@@ -27,7 +27,7 @@ export default function Upvotes({ id, votes }) {
   }, [session?.user.id])
 
   const handleUpvote = async () => {
-    if (!session) throw new Error('No user')
+    if (!session) throw new Error('User not signed in.')
     if (isUpvoted) {
       setIsUpvoted(false)
       setTotal((prev) => prev - 1)
@@ -47,7 +47,7 @@ export default function Upvotes({ id, votes }) {
   }
 
   const handleDownvote = async () => {
-    if (!session) throw new Error('No user')
+    if (!session) throw new Error('User not signed in.')
     if (isDownvoted) {
       setIsDownvoted(false)
       setTotal((prev) => prev + 1)

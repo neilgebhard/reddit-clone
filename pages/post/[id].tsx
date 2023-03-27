@@ -5,13 +5,16 @@ import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import Upvotes from '@/components/Upvotes'
+import { FaRegComment } from 'react-icons/fa'
 
 export const getServerSideProps = async (context) => {
   const { id } = context.query
 
   let { data } = await supabase
     .from('posts')
-    .select('*, post_votes(*), user:posted_by(*), comments(*, user:user_id(*))')
+    .select(
+      '*, post_votes(*), user:posted_by(*), comments(*, user:user_id(*)), subreddit(*)'
+    )
     .eq('id', id)
     .single()
 
@@ -35,6 +38,7 @@ const Post = ({ data }) => {
     text,
     created_at,
     comments,
+    subreddit,
   } = post
   const relativeTime = formatTimeAgo(created_at)
 
@@ -64,7 +68,7 @@ const Post = ({ data }) => {
     let { data } = await supabase
       .from('posts')
       .select(
-        '*, post_votes(*), user:posted_by(*), comments(*, user:user_id(*))'
+        '*, post_votes(*), user:posted_by(*), comments(*, user:user_id(*)), subreddit(*)'
       )
       .eq('id', id)
       .single()
@@ -89,7 +93,9 @@ const Post = ({ data }) => {
           <Upvotes id={postId} votes={post_votes} />
           <div className='p-3 grow'>
             <div className='flex text-sm gap-2'>
-              {/* <div className='font-semibold hover:underline'>r/{subreddit}</div> */}
+              <div className='font-semibold hover:underline'>
+                r/{subreddit.name}
+              </div>
               <div className='text-neutral-500 font-extralight'>
                 Posted by u/{user.username} {relativeTime}
               </div>
@@ -124,9 +130,9 @@ const Post = ({ data }) => {
                 )}
               </form>
             )}
-            {/* <div className='inline-flex items-center gap-1 text-neutral-500 font-semibold text-sm hover:underline'>
-            <GoComment size={15} /> {comments.length} comments
-          </div> */}
+            <div className='inline-flex items-center gap-1 text-neutral-500 font-semibold text-sm'>
+              <FaRegComment size={15} /> {comments.length} comments
+            </div>
           </div>
         </article>
         <div className='mt-3 space-y-2'>

@@ -1,25 +1,27 @@
 import Head from 'next/head'
-import { Inter } from 'next/font/google'
-import { useSession } from '@supabase/auth-helpers-react'
-import { FaRegComment } from 'react-icons/fa'
 import Link from 'next/link'
+import { useSession } from '@supabase/auth-helpers-react'
 import { supabase } from '@/lib/supabaseClient'
-import { formatTimeAgo } from '@/utils'
 import Upvotes from '@/components/Upvotes'
+import { formatTimeAgo } from '@/utils'
+import { FaRegComment } from 'react-icons/fa'
 
-const inter = Inter({ subsets: ['latin'] })
-
-export const getServerSideProps = async (ctx) => {
-  const { data: posts } = await supabase
-    .from('posts')
-    .select('*, post_votes(*), user:posted_by(*), comments(*, user:user_id(*))')
+export const getServerSideProps = async () => {
+  const [posts, subreddits] = await Promise.all([
+    supabase
+      .from('posts')
+      .select(
+        '*, post_votes(*), user:posted_by(*), comments(*, user:user_id(*)), subreddit(*)'
+      ),
+    supabase.from('subreddits').select('*'),
+  ])
 
   return {
-    props: { posts },
+    props: { posts: posts.data, subreddits: subreddits.data },
   }
 }
 
-export default function Home({ posts }) {
+export default function Home({ posts, subreddits }) {
   const session = useSession()
 
   return (
@@ -30,8 +32,8 @@ export default function Home({ posts }) {
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <main className={`px-3 ${inter.className}`}>
-        <div className='max-w-2xl mx-auto mt-5'>
+      <main className='px-3 mt-5'>
+        <div className='max-w-2xl mx-auto'>
           {session && (
             <Link
               className='inline-block text-blue-600 hover:underline mb-3'
@@ -40,9 +42,16 @@ export default function Home({ posts }) {
               + Post something
             </Link>
           )}
-          {posts.map((post, i) => {
-            return <Post key={i} {...post} />
-          })}
+          <div className='flex gap-2'>
+            <div className='max-w-2xl grow'>
+              <ul>
+                {posts.map((post, i) => {
+                  return <Post key={i} {...post} />
+                })}
+              </ul>
+            </div>
+            <Subreddits subreddits={subreddits} />
+          </div>
         </div>
       </main>
     </>
@@ -60,12 +69,14 @@ function Post({
 }) {
   const relativeTime = formatTimeAgo(new Date(created_at))
   return (
-    <article className='flex bg-white rounded-md mb-1 border border-neutral-300 hover:border-neutral-500 cursor-pointer overflow-hidden'>
+    <li className='flex bg-white rounded-md mb-1 border border-neutral-300 hover:border-neutral-500 cursor-pointer overflow-hidden'>
       <Upvotes id={id} votes={post_votes} />
       <Link className='grow' href={`/post/${id}`}>
         <div className='p-3 space-y-1 h-full'>
           <div className='flex text-sm gap-2'>
-            {/* <div className='font-semibold hover:underline'>r/{subreddit}</div> */}
+            <div className='font-semibold hover:underline'>
+              r/{subreddit.name}
+            </div>
             <div className='text-neutral-500 font-extralight'>
               Posted by u/{user.username} {relativeTime}
             </div>
@@ -76,6 +87,21 @@ function Post({
           </div>
         </div>
       </Link>
-    </article>
+    </li>
+  )
+}
+
+function Subreddits({ subreddits }) {
+  return (
+    <aside className='bg-white rounded-md border border-neutral-300 p-5 hidden sm:block'>
+      <h2 className='text-xl font-bold mb-3'>Subreddits</h2>
+      <ul>
+        {subreddits.map(({ name }, i) => (
+          <Link className='block hover:underline' href={`/r/${name}`} key={i}>
+            /r/{name}
+          </Link>
+        ))}
+      </ul>
+    </aside>
   )
 }
