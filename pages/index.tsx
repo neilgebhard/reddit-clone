@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useSession } from '@supabase/auth-helpers-react'
 import { supabase } from '@/lib/supabaseClient'
 import Upvotes from '@/components/Upvotes'
-import { formatTimeAgo } from '@/utils'
+import { formatTimeAgo } from '@/index'
 import { FaRegComment } from 'react-icons/fa'
 
 export const getServerSideProps = async () => {

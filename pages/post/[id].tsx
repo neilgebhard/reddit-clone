@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabaseClient'
-import { formatTimeAgo } from '../../utils'
+import { formatTimeAgo } from '../..'
 import { useSession } from '@supabase/auth-helpers-react'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
@@ -105,7 +105,12 @@ const Post = ({ data }) => {
             <h2 className='text-xl font-semibold my-1'>{title}</h2>
             <div>{text}</div>
             <div className='mt-3'>
-              <Image src={image_url} width={500} height={500} />
+              <Image
+                src={image_url}
+                width={500}
+                height={500}
+                alt='post image'
+              />
             </div>
             {session && (
               <form className='mt-8' onSubmit={handleSubmit}>

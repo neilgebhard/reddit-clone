@@ -40,7 +40,6 @@ export default function ImageUpload({ onUpload }) {
       {imageUrl ? (
         <Image
           src={process.env.NEXT_PUBLIC_SUPABASE_IMAGE_BUCKET_URL + imageUrl}
-          alt='Image'
           width={500}
           height={500}
           alt='Image'
