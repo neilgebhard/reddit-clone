@@ -90,12 +90,9 @@ export default function Signup() {
           </button>
         </form>
         <div className='mt-5 text-sm text-neutral-600'>
-          New to Reddit?{' '}
-          <Link
-            className='text-blue-500 underline font-semibold'
-            href='/signup'
-          >
-            Sign up
+          Have an account?{' '}
+          <Link className='text-blue-500 underline font-semibold' href='/login'>
+            Log in
           </Link>
         </div>
       </div>

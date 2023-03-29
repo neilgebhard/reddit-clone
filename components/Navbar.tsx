@@ -15,12 +15,20 @@ export default function Navbar() {
       {session ? (
         <UserDropdown />
       ) : (
-        <Link
-          className='inline-flex place-self-center rounded-full bg-blue-600 hover:bg-blue-500 text-white font-semibold px-10 py-1 cursor-pointer'
-          href='/login'
-        >
-          Log In
-        </Link>
+        <div className='flex gap-2'>
+          <Link
+            className='inline-flex place-self-center rounded-full border border-neutral-400 hover:border-neutral-500 text-neutral-900 font-semibold px-10 py-1 cursor-pointer'
+            href='/login'
+          >
+            Log In
+          </Link>
+          <Link
+            className='inline-flex place-self-center rounded-full bg-blue-600 hover:bg-blue-500 text-white font-semibold px-10 py-1 cursor-pointer'
+            href='/signup'
+          >
+            Sign Up
+          </Link>
+        </div>
       )}
     </nav>
   )

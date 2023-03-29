@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import Upvotes from '@/components/Upvotes'
 import { FaRegComment } from 'react-icons/fa'
+import Image from 'next/image'
 
 export const getServerSideProps = async (context) => {
   const { id } = context.query
@@ -39,6 +40,7 @@ const Post = ({ data }) => {
     created_at,
     comments,
     subreddit,
+    image_url,
   } = post
   const relativeTime = formatTimeAgo(created_at)
 
@@ -102,6 +104,9 @@ const Post = ({ data }) => {
             </div>
             <h2 className='text-xl font-semibold my-1'>{title}</h2>
             <div>{text}</div>
+            <div className='mt-3'>
+              <Image src={image_url} width={500} height={500} />
+            </div>
             {session && (
               <form className='mt-8' onSubmit={handleSubmit}>
                 <label className='text-sm font-light' htmlFor='text'>

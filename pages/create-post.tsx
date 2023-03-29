@@ -5,6 +5,7 @@ import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { supabase } from '@/lib/supabaseClient'
 import { Listbox, Transition } from '@headlessui/react'
 import { BsChevronExpand, BsCheck2 } from 'react-icons/bs'
+import ImageUpload from '@/components/ImageUpload'
 
 export const getServerSideProps = async () => {
   const { data: subreddits } = await supabase.from('subreddits').select('*')
@@ -18,6 +19,7 @@ export default function CreatePost({ subreddits }) {
   const router = useRouter()
   const supabase = useSupabaseClient()
   const [selected, setSelected] = useState(subreddits[0])
+  const [imageUrl, setImageUrl] = useState(null)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -30,12 +32,18 @@ export default function CreatePost({ subreddits }) {
 
     const { data, error } = await supabase
       .from('posts')
-      .insert([{ posted_by, title, text, subreddit: selected.id }])
+      .insert([
+        { posted_by, title, text, subreddit: selected.id, image_url: imageUrl },
+      ])
       .select()
 
     if (error) throw error
 
     router.push(`/post/${data[0].id}`)
+  }
+
+  const onUpload = (imageUrl) => {
+    setImageUrl(process.env.NEXT_PUBLIC_SUPABASE_IMAGE_BUCKET_URL + imageUrl)
   }
 
   return (
@@ -71,6 +79,7 @@ export default function CreatePost({ subreddits }) {
               rows={4}
             />
           </div>
+          <ImageUpload onUpload={onUpload} />
           <div className='text-right'>
             <button className='rounded-full bg-neutral-600 hover:bg-neutral-500 text-neutral-100 px-4 py-1'>
               Post
