@@ -2,9 +2,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useSession } from '@supabase/auth-helpers-react'
 import { supabase } from '@/lib/supabaseClient'
-import Upvotes from '@/components/Upvotes'
-import { formatTimeAgo } from '@/index'
-import { FaRegComment } from 'react-icons/fa'
+import Post from '@/components/Post'
 
 export const getServerSideProps = async () => {
   const [posts, subreddits] = await Promise.all([
@@ -55,42 +53,6 @@ export default function Home({ posts, subreddits }) {
         </div>
       </main>
     </>
-  )
-}
-
-function Post({
-  id,
-  user,
-  title,
-  subreddit,
-  comments,
-  created_at,
-  post_votes,
-}) {
-  const relativeTime = formatTimeAgo(new Date(created_at))
-  return (
-    <li className='flex bg-white rounded-md mb-1 border border-neutral-300 hover:border-neutral-500 cursor-pointer overflow-hidden'>
-      <Upvotes id={id} votes={post_votes} />
-      <Link className='grow' href={`/post/${id}`}>
-        <div className='p-3 space-y-1 h-full'>
-          <div className='flex text-sm gap-2'>
-            <Link
-              href={`/r/${subreddit.name}`}
-              className='font-semibold hover:underline'
-            >
-              r/{subreddit.name}
-            </Link>
-            <div className='text-neutral-500 font-extralight'>
-              Posted by u/{user.username} {relativeTime}
-            </div>
-          </div>
-          <h2 className='text-lg font-semibold'>{title}</h2>
-          <div className='inline-flex items-center gap-1 text-neutral-500 font-semibold text-sm hover:underline'>
-            <FaRegComment size={15} /> {comments.length} comments
-          </div>
-        </div>
-      </Link>
-    </li>
   )
 }
 

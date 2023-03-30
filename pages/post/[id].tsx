@@ -7,11 +7,12 @@ import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import Upvotes from '@/components/Upvotes'
 import { FaRegComment } from 'react-icons/fa'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export const getServerSideProps = async (context) => {
   const { id } = context.query
 
-  let { data } = await supabase
+  let { data, error } = await supabase
     .from('posts')
     .select(
       '*, post_votes(*), user:posted_by(*), comments(*, user:user_id(*)), subreddit(*)'
@@ -19,12 +20,14 @@ export const getServerSideProps = async (context) => {
     .eq('id', id)
     .single()
 
+  if (error) console.error(error)
+
   return {
     props: { data },
   }
 }
 
-const Post = ({ data }) => {
+export default function Post({ data }) {
   const [post, setPost] = useState(data)
   const session = useSession()
   const router = useRouter()
@@ -99,19 +102,28 @@ const Post = ({ data }) => {
                 r/{subreddit.name}
               </div>
               <div className='text-neutral-500 font-extralight'>
-                Posted by u/{user.username} {relativeTime}
+                Posted by{' '}
+                <Link
+                  className='hover:underline'
+                  href={`/user/${user.username}`}
+                >
+                  u/{user.username}
+                </Link>{' '}
+                {relativeTime}
               </div>
             </div>
             <h2 className='text-xl font-semibold my-1'>{title}</h2>
             <div>{text}</div>
-            <div className='mt-3'>
-              <Image
-                src={image_url}
-                width={500}
-                height={500}
-                alt='post image'
-              />
-            </div>
+            {image_url && (
+              <div className='mt-3'>
+                <Image
+                  src={image_url}
+                  width={500}
+                  height={500}
+                  alt='post image'
+                />
+              </div>
+            )}
             {session && (
               <form className='mt-8' onSubmit={handleSubmit}>
                 <label className='text-sm font-light' htmlFor='text'>
@@ -145,17 +157,15 @@ const Post = ({ data }) => {
             </div>
           </div>
         </article>
-        <div className='mt-3 space-y-2'>
+        <ul className='mt-3 space-y-2'>
           {comments.map((comment) => {
             return <Comment key={comment.id} {...comment} />
           })}
-        </div>
+        </ul>
       </div>
     </main>
   )
 }
-
-export default Post
 
 function Comment({ id, updated_at, user, text }) {
   const session = useSession()
@@ -173,14 +183,13 @@ function Comment({ id, updated_at, user, text }) {
   }
 
   return (
-    <div className='space-y-1 bg-white p-5 rounded'>
+    <li className='space-y-1 bg-white p-5 rounded'>
       <div className='text-sm'>
         <span className='font-semibold'>{user.username}</span>{' '}
         <span className='text-neutral-400'>{formatTimeAgo(updated_at)}</span>
       </div>
       <div>{text}</div>
       <div className='flex justify-between'>
-        <div className='text-neutral-500 font-semibold text-sm'>Reply</div>
         {session?.user.id === user.id && (
           <button
             className='text-red-500 font-semibold text-sm hover:underline'
@@ -190,6 +199,6 @@ function Comment({ id, updated_at, user, text }) {
           </button>
         )}
       </div>
-    </div>
+    </li>
   )
 }
