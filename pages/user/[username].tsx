@@ -4,6 +4,8 @@ import { useRouter } from 'next/router'
 import Post from '@/components/Post'
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
 import { formatTimeAgo } from '@/index'
+import { FaRegComment } from 'react-icons/fa'
+import Link from 'next/link'
 
 // TODO: fetch profile data
 
@@ -12,7 +14,10 @@ export const getServerSideProps = async (context) => {
   const { data: profile, error } = await supabase
     .from('profiles')
     .select(
-      '*, comments(*, user:user_id(*)), posts!posts_posted_by_fkey(*, post_votes(*), user:posted_by(*), comments(*, user:user_id(*)), subreddit(*))'
+      `*, 
+      comments(*, user:user_id(*), post:posts(*, subreddit(*))), 
+      posts!posts_posted_by_fkey(*, post_votes(*), user:posted_by(*), comments(*, user:user_id(*)), 
+      subreddit(*))`
     )
     .eq('username', username)
     .single()
@@ -59,7 +64,7 @@ export default function User({ profile }) {
   )
 }
 
-function Comment({ id, updated_at, user, text }) {
+function Comment({ id, updated_at, user, text, post }) {
   const session = useSession()
   const supabaseClient = useSupabaseClient()
 
@@ -75,10 +80,34 @@ function Comment({ id, updated_at, user, text }) {
   }
 
   return (
-    <li className='space-y-1 bg-white p-5 rounded'>
-      <div className='text-sm'>
-        <span className='font-semibold'>{user.username}</span>{' '}
-        <span className='text-neutral-400'>{formatTimeAgo(updated_at)}</span>
+    <li className='space-y-1 bg-white p-5 rounded border border-neutral-300'>
+      <div className='text-neutral-400 text-s mb-2'>
+        <FaRegComment className='text-lg inline mr-1' />{' '}
+        <Link
+          className='text-blue-400 hover:underline'
+          href={`/user/${user.username}`}
+        >
+          {user.username}
+        </Link>{' '}
+        commented on{' '}
+        <Link
+          href={`/post/${post.id}`}
+          className='text-neutral-800 hover:underline'
+        >
+          {post.title}
+        </Link>{' '}
+        •{' '}
+        <Link
+          className='hover:underline text-neutral-700 font-semibold'
+          href={`/r/${post.subreddit.name}`}
+        >
+          r/{post.subreddit.name}
+        </Link>
+      </div>
+      <div className='border my-4' />
+      <div className='text-s mt-2'>
+        <span className='font-semibold'>{user.username}</span>
+        <span className='text-neutral-400'> • {formatTimeAgo(updated_at)}</span>
       </div>
       <div>{text}</div>
       <div className='flex justify-between'>
