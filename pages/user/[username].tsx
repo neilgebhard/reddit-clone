@@ -7,8 +7,6 @@ import { formatTimeAgo } from '@/index'
 import { FaRegComment } from 'react-icons/fa'
 import Link from 'next/link'
 
-// TODO: fetch profile data
-
 export const getServerSideProps = async (context) => {
   const { username } = context.query
   const { data: profile, error } = await supabase
@@ -43,16 +41,31 @@ export default function User({ profile }) {
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <main className='px-3 mt-5'>
+      <main className='px-3 mt-10'>
         <div className='max-w-2xl mx-auto'>
-          <h2 className='text-xl font-semibold mt-5'>Posts</h2>
+          <div className='text-center'>
+            <span className='bg-white inline-block p-5 rounded border border-neutral-300'>
+              <div className='text-2xl font-semibold'>{profile.username}</div>
+              <div className='text-neutral-500 text-sm'>
+                <Link
+                  className='hover:underline'
+                  href={`/user/${profile.username}`}
+                >
+                  u/{profile.username}
+                </Link>
+                <span> • </span>
+                <span>{formatTimeAgo(profile.created_at)}</span>
+              </div>
+            </span>
+          </div>
+          <h2 className='text-xl font-semibold mt-5 mb-1'>Posts</h2>
           <ul>
             {posts.map((post, i) => {
               return <Post key={i} {...post} />
             })}
           </ul>
-          <h2 className='text-xl font-semibold mt-5'>Comments</h2>
-          <ul className='mt-3 space-y-2'>
+          <h2 className='text-xl font-semibold mt-5 mb-1'>Comments</h2>
+          <ul className='space-y-2'>
             {comments.map((comment) => {
               return <Comment key={comment.id} {...comment} />
             })}
@@ -81,7 +94,7 @@ function Comment({ id, updated_at, user, text, post }) {
 
   return (
     <li className='space-y-1 bg-white p-5 rounded border border-neutral-300'>
-      <div className='text-neutral-400 text-s mb-2'>
+      <div className='text-neutral-400 text-sm mb-2'>
         <FaRegComment className='text-lg inline mr-1' />{' '}
         <Link
           className='text-blue-400 hover:underline'
@@ -105,8 +118,8 @@ function Comment({ id, updated_at, user, text, post }) {
         </Link>
       </div>
       <div className='border my-4' />
-      <div className='text-s mt-2'>
-        <span className='font-semibold'>{user.username}</span>
+      <div className='text-sm mt-2'>
+        <span>{user.username}</span>
         <span className='text-neutral-400'> • {formatTimeAgo(updated_at)}</span>
       </div>
       <div>{text}</div>
