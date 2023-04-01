@@ -183,10 +183,10 @@ function Comment({ id, updated_at, user, text }) {
   }
 
   return (
-    <li className='space-y-1 bg-white p-5 rounded'>
+    <li className='space-y-1 p-5 rounded'>
       <div className='text-sm'>
         <span className='font-semibold'>{user.username}</span>{' '}
-        <span className='text-neutral-400'>{formatTimeAgo(updated_at)}</span>
+        <span className='text-neutral-500'>{formatTimeAgo(updated_at)}</span>
       </div>
       <div>{text}</div>
       <div className='flex justify-between'>

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useSession } from '@supabase/auth-helpers-react'
 import { supabase } from '@/lib/supabaseClient'
 import Post from '@/components/Post'
+import { useMemo, useState } from 'react'
 
 export const getServerSideProps = async () => {
   const [posts, subreddits] = await Promise.all([
@@ -19,8 +20,41 @@ export const getServerSideProps = async () => {
   }
 }
 
+const sortByDate = (posts) => {
+  return posts.sort((a, b) => {
+    return new Date(b.created_at) - new Date(a.created_at)
+  })
+}
+
+const sortByUpvotes = (posts) => {
+  return posts.sort((a, b) => {
+    return b.upvotes - a.upvotes
+  })
+}
+
 export default function Home({ posts, subreddits }) {
   const session = useSession()
+  const [sort, setSort] = useState('new')
+
+  posts = useMemo(
+    () =>
+      posts.map((post) => {
+        const upvotes = post.post_votes.reduce((acc, vote) => {
+          return acc + (vote.is_upvote ? 1 : -1)
+        }, 0)
+        return { ...post, upvotes }
+      }),
+    [posts]
+  )
+
+  const handleSort = (sortBy) => {
+    if (sortBy === 'new') {
+      posts = sortByDate(posts)
+    } else if (sortBy === 'top') {
+      posts = sortByUpvotes(posts)
+    }
+    setSort(sortBy)
+  }
 
   return (
     <>
@@ -40,6 +74,27 @@ export default function Home({ posts, subreddits }) {
               + Post something
             </Link>
           )}
+          <div className='mb-3'>
+            <h3 className='text-sm uppercase'>Sort by:</h3>
+            <div className='flex gap-2'>
+              <button
+                className={`border border-neutral-300 hover:bg-neutral-200 px-4 py-1 text-lg rounded ${
+                  sort === 'new' && 'bg-neutral-200'
+                }`}
+                onClick={() => handleSort('new')}
+              >
+                new
+              </button>
+              <button
+                className={`border border-neutral-300 hover:bg-neutral-200 px-4 py-1 text-lg rounded ${
+                  sort === 'top' && 'bg-neutral-200'
+                }`}
+                onClick={() => handleSort('top')}
+              >
+                top
+              </button>
+            </div>
+          </div>
           <div className='flex gap-2'>
             <div className='max-w-2xl grow'>
               <ul>
@@ -50,6 +105,7 @@ export default function Home({ posts, subreddits }) {
             </div>
             <Subreddits subreddits={subreddits} />
           </div>
+          <pre>{JSON.stringify(posts, null, 2)}</pre>
         </div>
       </main>
     </>
@@ -59,8 +115,8 @@ export default function Home({ posts, subreddits }) {
 function Subreddits({ subreddits }) {
   return (
     <aside>
-      <div className='bg-white rounded-md border border-neutral-300 p-5 hidden sm:block'>
-        <h2 className='text-xl font-bold mb-3'>Subreddits</h2>
+      <div className='rounded-md border border-neutral-300 p-5 hidden sm:block'>
+        <h2 className='text-sm mb-3 uppercase'>Subreddits</h2>
         <ul>
           {subreddits.map(({ name }, i) => (
             <Link className='block hover:underline' href={`/r/${name}`} key={i}>

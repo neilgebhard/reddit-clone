@@ -13,9 +13,13 @@ export default function Upvotes({ id, votes }) {
 
   const [isUpvoted, setIsUpvoted] = useState(false)
   const [isDownvoted, setIsDownvoted] = useState(false)
-  const [total, setTotal] = useState(() =>
-    votes.reduce((acc, curr) => (curr.is_upvote ? acc + 1 : acc - 1), 0)
-  )
+  const [total, setTotal] = useState(0)
+
+  useEffect(() => {
+    setTotal(
+      votes.reduce((acc, curr) => (curr.is_upvote ? acc + 1 : acc - 1), 0)
+    )
+  }, [votes])
 
   useEffect(() => {
     setIsUpvoted(
@@ -24,7 +28,7 @@ export default function Upvotes({ id, votes }) {
     setIsDownvoted(
       votes.some((v) => v.user_id === session?.user.id && v.is_upvote === false)
     )
-  }, [session?.user.id])
+  }, [session?.user.id, votes])
 
   const handleUpvote = async () => {
     if (!session) throw new Error('User not signed in.')
