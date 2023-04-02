@@ -135,29 +135,27 @@ export default function Post({ data }) {
                   placeholder='What are your thoughts?'
                   rows={4}
                 />
-                <div className='text-right'>
+                <div className='flex justify-between'>
+                  {session.user.id === user.id && (
+                    <button
+                      className='text-red-800 hover:border-neutral-600 font-semibold hover:underline'
+                      onClick={handleDelete}
+                    >
+                      Delete
+                    </button>
+                  )}
                   <button className='rounded-full bg-neutral-600 hover:bg-neutral-500 text-neutral-100 px-4 py-1'>
                     Comment
                   </button>
                 </div>
-                {session.user.id === user.id && (
-                  <div className='text-right mt-2'>
-                    <button
-                      className='rounded-full border border-neutral-400 text-red-800 hover:border-neutral-600 px-4 py-1'
-                      onClick={handleDelete}
-                    >
-                      Delete Post
-                    </button>
-                  </div>
-                )}
               </form>
             )}
-            <div className='inline-flex items-center gap-1 text-neutral-500 font-semibold text-sm'>
+            {/* <div className='inline-flex items-center gap-1 text-neutral-500 font-semibold text-sm'>
               <FaRegComment size={15} /> {comments.length} comments
-            </div>
+            </div> */}
           </div>
         </article>
-        <ul className='mt-3 space-y-2'>
+        <ul className='mt-5 space-y-1'>
           {comments.map((comment) => {
             return <Comment key={comment.id} {...comment} />
           })}
@@ -183,7 +181,7 @@ function Comment({ id, updated_at, user, text }) {
   }
 
   return (
-    <li className='space-y-1 p-5 rounded'>
+    <li className='space-y-1 py-3 rounded'>
       <div className='text-sm'>
         <span className='font-semibold'>{user.username}</span>{' '}
         <span className='text-neutral-500'>{formatTimeAgo(updated_at)}</span>
@@ -192,7 +190,7 @@ function Comment({ id, updated_at, user, text }) {
       <div className='flex justify-between'>
         {session?.user.id === user.id && (
           <button
-            className='text-red-500 font-semibold text-sm hover:underline'
+            className='text-red-700 font-semibold text-sm hover:underline'
             onClick={handleDelete}
           >
             Delete

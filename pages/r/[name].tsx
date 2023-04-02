@@ -57,7 +57,7 @@ export default function Subreddit({ posts, subreddits }) {
             <div className='max-w-2xl grow'>
               <ul>
                 {posts[0].posts.map((post, i) => {
-                  return <Post key={i} {...post} />
+                  return <Post key={post.id} {...post} />
                 })}
               </ul>
             </div>

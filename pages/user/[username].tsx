@@ -61,7 +61,7 @@ export default function User({ profile }) {
           <h2 className='text-xl font-semibold mt-5 mb-1'>Posts</h2>
           <ul>
             {posts.map((post, i) => {
-              return <Post key={i} {...post} />
+              return <Post key={post.id} {...post} />
             })}
           </ul>
           <h2 className='text-xl font-semibold mt-5 mb-1'>Comments</h2>
@@ -70,7 +70,6 @@ export default function User({ profile }) {
               return <Comment key={comment.id} {...comment} />
             })}
           </ul>
-          <pre>{JSON.stringify(profile, null, 2)}</pre>
         </div>
       </main>
     </>

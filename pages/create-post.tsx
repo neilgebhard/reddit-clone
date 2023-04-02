@@ -97,7 +97,7 @@ function ListBox({ subreddits, selected, setSelected }) {
       <Listbox value={selected} onChange={setSelected}>
         <div className='relative mt-1'>
           <Listbox.Label className='uppercase text-sm font-semibold block'>
-            Subreddits
+            Choose a community
           </Listbox.Label>
           <Listbox.Button className='relative w-full max-w-xs cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left border focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm'>
             <span className='block truncate'>{selected.name}</span>
@@ -117,7 +117,7 @@ function ListBox({ subreddits, selected, setSelected }) {
             <Listbox.Options className='absolute mt-1 max-h-60 w-full max-w-xs overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm'>
               {subreddits.map((subreddit, i) => (
                 <Listbox.Option
-                  key={i}
+                  key={subreddit.id}
                   className={({ active }) =>
                     `relative cursor-default select-none py-2 pl-10 pr-4 ${
                       active ? 'bg-orange-100 text-orange-900' : 'text-gray-900'

@@ -4,6 +4,9 @@ import { useSession } from '@supabase/auth-helpers-react'
 import { supabase } from '@/lib/supabaseClient'
 import Post from '@/components/Post'
 import { useMemo, useState } from 'react'
+import { AiFillPlusCircle } from 'react-icons/ai'
+import { BiNews } from 'react-icons/bi'
+import { BsFire } from 'react-icons/bs'
 
 export const getServerSideProps = async () => {
   const [posts, subreddits] = await Promise.all([
@@ -11,7 +14,8 @@ export const getServerSideProps = async () => {
       .from('posts')
       .select(
         '*, post_votes(*), user:posted_by(*), comments(*, user:user_id(*)), subreddit(*)'
-      ),
+      )
+      .order('created_at', { ascending: false }),
     supabase.from('subreddits').select('*'),
   ])
 
@@ -68,30 +72,34 @@ export default function Home({ posts, subreddits }) {
         <div className='max-w-2xl mx-auto'>
           {session && (
             <Link
-              className='inline-block text-blue-600 hover:underline mb-3'
+              className='flex items-center gap-2 mb-3 bg-white p-2 border rounded'
               href='/create-post'
             >
-              + Post something
+              <AiFillPlusCircle className='text-4xl text-neutral-500' />{' '}
+              <input
+                className='border w-full rounded-md px-3 py-2 bg-neutral-50 hover:bg-white'
+                placeholder='Create Post'
+                type='text'
+              />
             </Link>
           )}
-          <div className='mb-3'>
-            <h3 className='text-sm uppercase'>Sort by:</h3>
-            <div className='flex gap-2'>
+          <div className='mb-3 bg-white border rounded p-3'>
+            <div className='flex gap-3'>
               <button
-                className={`border border-neutral-300 hover:bg-neutral-200 px-4 py-1 text-lg rounded ${
-                  sort === 'new' && 'bg-neutral-200'
+                className={`flex items-center gap-2 border border-neutral-300 hover:bg-neutral-200 px-2 py-1 text-lg rounded ${
+                  sort === 'new' && 'bg-neutral-100'
                 }`}
                 onClick={() => handleSort('new')}
               >
-                new
+                <BiNews /> New
               </button>
               <button
-                className={`border border-neutral-300 hover:bg-neutral-200 px-4 py-1 text-lg rounded ${
+                className={`flex items-center gap-2 border border-neutral-300 hover:bg-neutral-200 px-3 py-1 text-lg rounded ${
                   sort === 'top' && 'bg-neutral-200'
                 }`}
                 onClick={() => handleSort('top')}
               >
-                top
+                <BsFire /> Top
               </button>
             </div>
           </div>
@@ -99,13 +107,12 @@ export default function Home({ posts, subreddits }) {
             <div className='max-w-2xl grow'>
               <ul>
                 {posts.map((post, i) => {
-                  return <Post key={i} {...post} />
+                  return <Post key={post.id} {...post} />
                 })}
               </ul>
             </div>
             <Subreddits subreddits={subreddits} />
           </div>
-          <pre>{JSON.stringify(posts, null, 2)}</pre>
         </div>
       </main>
     </>
