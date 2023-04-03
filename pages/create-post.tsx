@@ -21,7 +21,7 @@ export default function CreatePost({ subreddits }) {
   const supabase = useSupabaseClient()
   const [selected, setSelected] = useState(subreddits[0])
   const [imageUrl, setImageUrl] = useState(null)
-  const [type, selectType] = useState('post')
+  const [type, setType] = useState(router.query.type || 'post')
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -83,7 +83,7 @@ export default function CreatePost({ subreddits }) {
               className={`grow border-b py-4 hover:bg-neutral-50 cursor-pointer flex items-center justify-center gap-2 ${
                 type === 'post' && 'border-b-2 border-b-blue-600 text-blue-600'
               }`}
-              onClick={() => selectType('post')}
+              onClick={() => setType('post')}
               type='button'
             >
               <TbArticle className='text-2xl' /> Post
@@ -92,7 +92,7 @@ export default function CreatePost({ subreddits }) {
               className={`grow border-b py-4 hover:bg-neutral-50 cursor-pointer flex items-center justify-center gap-2 ${
                 type === 'image' && 'border-b-2 border-b-blue-600 text-blue-600'
               }`}
-              onClick={() => selectType('image')}
+              onClick={() => setType('image')}
               type='button'
             >
               <BsImage className='text-xl' /> Image
@@ -101,7 +101,7 @@ export default function CreatePost({ subreddits }) {
               className={`grow border-b py-4 hover:bg-neutral-50 cursor-pointer flex items-center justify-center gap-2 ${
                 type === 'link' && 'border-b-2 border-b-blue-600 text-blue-600'
               }`}
-              onClick={() => selectType('link')}
+              onClick={() => setType('link')}
               type='button'
             >
               <BsLink className='text-2xl' /> Link

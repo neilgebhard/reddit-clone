@@ -64,7 +64,7 @@ export default function Account({ data }) {
   return (
     <div className='max-w-2xl mx-auto mt-10'>
       <h1 className='text-xl mb-3'>Account</h1>
-      <div className='bg-white rounded p-5'>
+      <div className='bg-white rounded p-5 border'>
         <form onSubmit={handleSubmit}>
           <div className='mb-5'>
             <label className='uppercase text-sm font-semibold' htmlFor='email'>

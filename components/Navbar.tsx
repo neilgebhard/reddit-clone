@@ -10,7 +10,7 @@ export default function Navbar() {
     <nav className='bg-white shadow-sm px-5 py-2 flex justify-between items-center'>
       <Link href='/' className='flex gap-2 items-center'>
         <BsReddit className='text-orange-700' size={33} />
-        <h1 className='font-semibold text-xl'>reddit</h1>
+        <div className='font-semibold text-xl'>reddit</div>
       </Link>
       {session ? (
         <UserDropdown />

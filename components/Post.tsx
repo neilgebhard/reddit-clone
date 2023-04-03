@@ -37,7 +37,7 @@ export default function Post({
           </div>
           <Link href={url ? url : `/post/${id}`}>
             <h2 className='text-lg font-semibold hover:underline'>
-              {title} {url && <BiLinkExternal />}
+              {title} {url && <BiLinkExternal className='inline' />}
             </h2>
           </Link>
           <Link
