@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { FaRegComment } from 'react-icons/fa'
 import { formatTimeAgo } from '..'
 import Upvotes from './Upvotes'
+import { BiLinkExternal } from 'react-icons/bi'
 
 export default function Post({
   id,
@@ -11,6 +12,7 @@ export default function Post({
   comments,
   created_at,
   post_votes,
+  url,
 }) {
   const relativeTime = formatTimeAgo(new Date(created_at))
   return (
@@ -33,8 +35,10 @@ export default function Post({
               {relativeTime}
             </div>
           </div>
-          <Link href={`/post/${id}`}>
-            <h2 className='text-lg font-semibold hover:underline'>{title}</h2>
+          <Link href={url ? url : `/post/${id}`}>
+            <h2 className='text-lg font-semibold hover:underline'>
+              {title} {url && <BiLinkExternal />}
+            </h2>
           </Link>
           <Link
             className='inline-flex items-center gap-1 text-neutral-500 font-semibold text-sm hover:underline'

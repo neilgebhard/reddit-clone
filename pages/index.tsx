@@ -111,7 +111,7 @@ export default function Home({ posts, subreddits }) {
                 })}
               </ul>
             </div>
-            <Subreddits subreddits={subreddits} />
+            {/* <Subreddits subreddits={subreddits} /> */}
           </div>
         </div>
       </main>

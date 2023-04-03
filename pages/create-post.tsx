@@ -4,8 +4,9 @@ import { useSession } from '@supabase/auth-helpers-react'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { supabase } from '@/lib/supabaseClient'
 import { Listbox, Transition } from '@headlessui/react'
-import { BsChevronExpand, BsCheck2 } from 'react-icons/bs'
+import { BsCheck2, BsChevronDown, BsImage, BsLink } from 'react-icons/bs'
 import ImageUpload from '@/components/ImageUpload'
+import { TbArticle } from 'react-icons/tb'
 
 export const getServerSideProps = async () => {
   const { data: subreddits } = await supabase.from('subreddits').select('*')
@@ -20,6 +21,7 @@ export default function CreatePost({ subreddits }) {
   const supabase = useSupabaseClient()
   const [selected, setSelected] = useState(subreddits[0])
   const [imageUrl, setImageUrl] = useState(null)
+  const [type, selectType] = useState('post')
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -28,12 +30,29 @@ export default function CreatePost({ subreddits }) {
 
     const posted_by = session.user.id
     const title = e.target.elements.title.value
-    const text = e.target.elements.text.value
+
+    let text
+    let url
+
+    if (type === 'post') {
+      text = e.target.elements.text.value
+    }
+
+    if (type === 'link') {
+      url = e.target.elements.link.value
+    }
 
     const { data, error } = await supabase
       .from('posts')
       .insert([
-        { posted_by, title, text, subreddit: selected.id, image_url: imageUrl },
+        {
+          posted_by,
+          title,
+          text,
+          image_url: imageUrl,
+          url,
+          subreddit: selected.id,
+        },
       ])
       .select()
 
@@ -49,44 +68,100 @@ export default function CreatePost({ subreddits }) {
   return (
     <div className='max-w-2xl mx-auto mt-10'>
       <h1 className='text-xl mb-3'>Create a post</h1>
-      <div className='bg-white rounded p-5'>
-        <form onSubmit={handleSubmit}>
-          <div className='mb-5'>
-            <ListBox
-              subreddits={subreddits}
-              selected={selected}
-              setSelected={setSelected}
-            />
-          </div>
-          <div className='mb-5'>
-            <label className='uppercase text-sm font-semibold' htmlFor='title'>
-              Title
-            </label>
-            <input
-              id='title'
-              className='block border w-full rounded px-2 py-1'
-              type='text'
-            />
-          </div>
-          <div className='mb-5'>
-            <label className='uppercase text-sm font-semibold' htmlFor='text'>
-              Text
-            </label>
-            <textarea
-              id='text'
-              className='block border w-full rounded px-2 py-1'
-              placeholder='Text (optional)'
-              rows={4}
-            />
-          </div>
-          <ImageUpload onUpload={onUpload} />
-          <div className='text-right'>
-            <button className='rounded-full bg-neutral-600 hover:bg-neutral-500 text-neutral-100 px-4 py-1'>
-              Post
+      <hr className='mb-4' />
+      <form onSubmit={handleSubmit}>
+        <div className='mb-2'>
+          <ListBox
+            subreddits={subreddits}
+            selected={selected}
+            setSelected={setSelected}
+          />
+        </div>
+        <div className='bg-white rounded border'>
+          <div className='flex divide-x text-neutral-500 font-semibold'>
+            <button
+              className={`grow border-b py-4 hover:bg-neutral-50 cursor-pointer flex items-center justify-center gap-2 ${
+                type === 'post' && 'border-b-2 border-b-blue-600 text-blue-600'
+              }`}
+              onClick={() => selectType('post')}
+              type='button'
+            >
+              <TbArticle className='text-2xl' /> Post
+            </button>
+            <button
+              className={`grow border-b py-4 hover:bg-neutral-50 cursor-pointer flex items-center justify-center gap-2 ${
+                type === 'image' && 'border-b-2 border-b-blue-600 text-blue-600'
+              }`}
+              onClick={() => selectType('image')}
+              type='button'
+            >
+              <BsImage className='text-xl' /> Image
+            </button>
+            <button
+              className={`grow border-b py-4 hover:bg-neutral-50 cursor-pointer flex items-center justify-center gap-2 ${
+                type === 'link' && 'border-b-2 border-b-blue-600 text-blue-600'
+              }`}
+              onClick={() => selectType('link')}
+              type='button'
+            >
+              <BsLink className='text-2xl' /> Link
             </button>
           </div>
-        </form>
-      </div>
+          <div className='p-5'>
+            <div className='mb-5'>
+              <label
+                className='uppercase text-sm font-semibold'
+                htmlFor='title'
+              >
+                Title
+              </label>
+              <input
+                id='title'
+                className='block border w-full rounded px-2 py-1'
+                type='text'
+              />
+            </div>
+            {type === 'post' && (
+              <div className='mb-5'>
+                <label
+                  className='uppercase text-sm font-semibold'
+                  htmlFor='text'
+                >
+                  Text
+                </label>
+                <textarea
+                  id='text'
+                  className='block border w-full rounded px-2 py-1'
+                  placeholder='Text (optional)'
+                  rows={4}
+                />
+              </div>
+            )}
+            {type === 'image' && <ImageUpload onUpload={onUpload} />}
+            {type === 'link' && (
+              <div className='mb-5'>
+                <label
+                  className='uppercase text-sm font-semibold'
+                  htmlFor='link'
+                >
+                  Link
+                </label>
+                <input
+                  id='link'
+                  className='block border w-full rounded px-2 py-1'
+                  type='url'
+                  placeholder='https://example.com'
+                />
+              </div>
+            )}
+            <div className='text-right'>
+              <button className='rounded-full bg-neutral-600 hover:bg-neutral-500 text-neutral-100 px-4 py-1'>
+                Post
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
     </div>
   )
 }
@@ -96,13 +171,13 @@ function ListBox({ subreddits, selected, setSelected }) {
     <>
       <Listbox value={selected} onChange={setSelected}>
         <div className='relative mt-1'>
-          <Listbox.Label className='uppercase text-sm font-semibold block'>
+          <Listbox.Label className='uppercase text-sm font-semibold block mb-1'>
             Choose a community
           </Listbox.Label>
           <Listbox.Button className='relative w-full max-w-xs cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left border focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm'>
             <span className='block truncate'>{selected.name}</span>
             <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
-              <BsChevronExpand
+              <BsChevronDown
                 className='h-5 w-5 text-gray-400'
                 aria-hidden='true'
               />
