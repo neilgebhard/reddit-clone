@@ -10,7 +10,7 @@ export default function Login() {
   const supabaseClient = useSupabaseClient()
   const ref = useRef()
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState()
 
   useEffect(() => {
     ref.current.focus()
@@ -48,11 +48,6 @@ export default function Login() {
       <main className='mt-10'>
         <div className='max-w-md mx-auto bg-white p-12 rounded-2xl border'>
           <h2 className='text-xl font-semibold mb-5'>Login</h2>
-          {error && (
-            <div className='text-red-700 font-semibold mb-4 border border-4 border-red-700 rounded-full px-6 py-3'>
-              Oops! {error}.
-            </div>
-          )}
           <form onSubmit={handleSubmit}>
             <label
               className='font-semibold uppercase text-sm text-neutral-600'
@@ -79,11 +74,19 @@ export default function Login() {
               type='password'
               required
             />
-
-            <button className='bg-orange-700 text-white w-full rounded-full font-semibold py-3 mt-5'>
+            {/* <button className='bg-orange-700 text-white w-full rounded-full font-semibold py-3 mt-5'> */}
+            <button
+              className={`bg-orange-700 text-white w-full rounded-full font-semibold py-3 mt-5 disabled:bg-neutral-400 disabled:cursor-not-allowed`}
+              disabled={loading}
+            >
               {loading ? <BeatLoader size={10} color='white' /> : 'Log In'}
             </button>
           </form>
+          {error && (
+            <div className='text-red-700 font-semibold mt-4'>
+              Oops! {error}.
+            </div>
+          )}
           <div className='mt-5 text-sm text-neutral-600'>
             New to Reddit?{' '}
             <Link
