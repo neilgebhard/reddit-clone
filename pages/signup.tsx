@@ -2,13 +2,12 @@ import { supabase } from '@/lib/supabaseClient'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import Head from 'next/head'
 
 export default function Signup() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const supabaseClient = useSupabaseClient()
+  const [error, setError] = useState(null)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -16,15 +15,22 @@ export default function Signup() {
     const email = e.target.elements.email.value
     const password = e.target.elements.password.value
     const username = e.target.elements.username.value
-
-    setLoading(true)
-    let { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { username },
-      },
-    })
+    try {
+      setLoading(true)
+      let { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { username },
+        },
+      })
+      if (error) throw error
+      router.push(`/confirm?email=${email}`)
+    } catch (error) {
+      setError(error.message)
+    } finally {
+      setLoading(false)
+    }
 
     // if(error) {
     //   setErrorMessage(error.message)
@@ -35,14 +41,6 @@ export default function Signup() {
     //     window.location.href = 'dashboard'
     //   }
     // }
-
-    setLoading(false)
-
-    if (error) {
-      console.error(error)
-    } else {
-      router.push(`/confirm?email=${email}`)
-    }
   }
 
   return (
@@ -92,7 +90,7 @@ export default function Signup() {
               className={`bg-orange-700 text-white w-full rounded-full font-semibold py-3 mt-5 disabled:bg-neutral-400 disabled:cursor-not-allowed`}
               disabled={loading}
             >
-              Sign Up
+              Sign up
             </button>
           </form>
           <div className='mt-5 text-sm text-neutral-600'>
