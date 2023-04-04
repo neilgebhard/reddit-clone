@@ -7,6 +7,7 @@ import { Listbox, Transition } from '@headlessui/react'
 import { BsCheck2, BsChevronDown, BsImage, BsLink } from 'react-icons/bs'
 import ImageUpload from '@/components/ImageUpload'
 import { TbArticle } from 'react-icons/tb'
+import Head from 'next/head'
 
 export const getServerSideProps = async () => {
   const { data: subreddits } = await supabase.from('subreddits').select('*')
@@ -66,103 +67,114 @@ export default function CreatePost({ subreddits }) {
   }
 
   return (
-    <div className='max-w-2xl mx-auto mt-10'>
-      <h1 className='text-xl mb-3'>Create a post</h1>
-      <hr className='mb-4' />
-      <form onSubmit={handleSubmit}>
-        <div className='mb-2'>
-          <ListBox
-            subreddits={subreddits}
-            selected={selected}
-            setSelected={setSelected}
-          />
-        </div>
-        <div className='bg-white rounded border'>
-          <div className='flex divide-x text-neutral-500 font-semibold'>
-            <button
-              className={`grow border-b py-4 hover:bg-neutral-50 cursor-pointer flex items-center justify-center gap-2 ${
-                type === 'post' && 'border-b-2 border-b-blue-600 text-blue-600'
-              }`}
-              onClick={() => setType('post')}
-              type='button'
-            >
-              <TbArticle className='text-2xl' /> Post
-            </button>
-            <button
-              className={`grow border-b py-4 hover:bg-neutral-50 cursor-pointer flex items-center justify-center gap-2 ${
-                type === 'image' && 'border-b-2 border-b-blue-600 text-blue-600'
-              }`}
-              onClick={() => setType('image')}
-              type='button'
-            >
-              <BsImage className='text-xl' /> Image
-            </button>
-            <button
-              className={`grow border-b py-4 hover:bg-neutral-50 cursor-pointer flex items-center justify-center gap-2 ${
-                type === 'link' && 'border-b-2 border-b-blue-600 text-blue-600'
-              }`}
-              onClick={() => setType('link')}
-              type='button'
-            >
-              <BsLink className='text-2xl' /> Link
-            </button>
+    <>
+      <Head>
+        <title>Create Post</title>
+        <meta name='description' content='Create a post' />
+        <meta name='viewport' content='width=device-width, initial-scale=1' />
+        <link rel='icon' href='/favicon.ico' />
+      </Head>
+      <main className='max-w-2xl mx-auto mt-10'>
+        <h1 className='text-xl mb-3'>Create a post</h1>
+        <hr className='mb-4' />
+        <form onSubmit={handleSubmit}>
+          <div className='mb-2'>
+            <ListBox
+              subreddits={subreddits}
+              selected={selected}
+              setSelected={setSelected}
+            />
           </div>
-          <div className='p-5'>
-            <div className='mb-5'>
-              <label
-                className='uppercase text-sm font-semibold'
-                htmlFor='title'
+          <div className='bg-white rounded border'>
+            <div className='flex divide-x text-neutral-500 font-semibold'>
+              <button
+                className={`grow border-b py-4 hover:bg-neutral-50 cursor-pointer flex items-center justify-center gap-2 ${
+                  type === 'post' &&
+                  'border-b-2 border-b-blue-600 text-blue-600'
+                }`}
+                onClick={() => setType('post')}
+                type='button'
               >
-                Title
-              </label>
-              <input
-                id='title'
-                className='block border w-full rounded px-2 py-1'
-                type='text'
-              />
-            </div>
-            {type === 'post' && (
-              <div className='mb-5'>
-                <label
-                  className='uppercase text-sm font-semibold'
-                  htmlFor='text'
-                >
-                  Text
-                </label>
-                <textarea
-                  id='text'
-                  className='block border w-full rounded px-2 py-1'
-                  placeholder='Text (optional)'
-                  rows={4}
-                />
-              </div>
-            )}
-            {type === 'image' && <ImageUpload onUpload={onUpload} />}
-            {type === 'link' && (
-              <div className='mb-5'>
-                <label
-                  className='uppercase text-sm font-semibold'
-                  htmlFor='link'
-                >
-                  Link
-                </label>
-                <input
-                  id='link'
-                  className='block border w-full rounded px-2 py-1'
-                  type='url'
-                  placeholder='https://example.com'
-                />
-              </div>
-            )}
-            <div className='text-right'>
-              <button className='rounded-full bg-neutral-600 hover:bg-neutral-500 text-neutral-100 px-4 py-1'>
-                Post
+                <TbArticle className='text-2xl' /> Post
+              </button>
+              <button
+                className={`grow border-b py-4 hover:bg-neutral-50 cursor-pointer flex items-center justify-center gap-2 ${
+                  type === 'image' &&
+                  'border-b-2 border-b-blue-600 text-blue-600'
+                }`}
+                onClick={() => setType('image')}
+                type='button'
+              >
+                <BsImage className='text-xl' /> Image
+              </button>
+              <button
+                className={`grow border-b py-4 hover:bg-neutral-50 cursor-pointer flex items-center justify-center gap-2 ${
+                  type === 'link' &&
+                  'border-b-2 border-b-blue-600 text-blue-600'
+                }`}
+                onClick={() => setType('link')}
+                type='button'
+              >
+                <BsLink className='text-2xl' /> Link
               </button>
             </div>
+            <div className='p-5'>
+              <div className='mb-5'>
+                <label
+                  className='uppercase text-sm font-semibold'
+                  htmlFor='title'
+                >
+                  Title
+                </label>
+                <input
+                  id='title'
+                  className='block border w-full rounded px-2 py-1'
+                  type='text'
+                />
+              </div>
+              {type === 'post' && (
+                <div className='mb-5'>
+                  <label
+                    className='uppercase text-sm font-semibold'
+                    htmlFor='text'
+                  >
+                    Text
+                  </label>
+                  <textarea
+                    id='text'
+                    className='block border w-full rounded px-2 py-1'
+                    placeholder='Text (optional)'
+                    rows={4}
+                  />
+                </div>
+              )}
+              {type === 'image' && <ImageUpload onUpload={onUpload} />}
+              {type === 'link' && (
+                <div className='mb-5'>
+                  <label
+                    className='uppercase text-sm font-semibold'
+                    htmlFor='link'
+                  >
+                    Link
+                  </label>
+                  <input
+                    id='link'
+                    className='block border w-full rounded px-2 py-1'
+                    type='url'
+                    placeholder='https://example.com'
+                  />
+                </div>
+              )}
+              <div className='text-right'>
+                <button className='rounded-full bg-neutral-600 hover:bg-neutral-500 text-neutral-100 px-4 py-1'>
+                  Post
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-      </form>
-    </div>
+        </form>
+      </main>
+    </>
   )
 }
 

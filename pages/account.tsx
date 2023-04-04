@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
+import Head from 'next/head'
 import { useState } from 'react'
 
 export const getServerSideProps = async (context) => {
@@ -62,53 +63,65 @@ export default function Account({ data }) {
   }
 
   return (
-    <div className='max-w-2xl mx-auto mt-10'>
-      <h1 className='text-xl mb-3'>Account</h1>
-      <div className='bg-white rounded p-5 border'>
-        <form onSubmit={handleSubmit}>
-          <div className='mb-5'>
-            <label className='uppercase text-sm font-semibold' htmlFor='email'>
-              Email
-            </label>
-            <input
-              id='email'
-              className='block border w-full rounded px-2 py-1 cursor-not-allowed'
-              type='text'
-              disabled
-              defaultValue={session?.user.email}
-            />
+    <>
+      <Head>
+        <title>Account</title>
+        <meta
+          name='description'
+          content='A page to see and update your account details'
+        />
+      </Head>
+      <main className='max-w-2xl mx-auto mt-10'>
+        <h1 className='text-xl mb-3'>Account</h1>
+        <div className='bg-white rounded p-5 border'>
+          <form onSubmit={handleSubmit}>
+            <div className='mb-5'>
+              <label
+                className='uppercase text-sm font-semibold'
+                htmlFor='email'
+              >
+                Email
+              </label>
+              <input
+                id='email'
+                className='block border w-full rounded px-2 py-1 cursor-not-allowed'
+                type='text'
+                disabled
+                defaultValue={session?.user.email}
+              />
+            </div>
+            <div className='mb-5'>
+              <label
+                className='uppercase text-sm font-semibold'
+                htmlFor='username'
+              >
+                Username
+              </label>
+              <input
+                id='username'
+                className='block border w-full rounded px-2 py-1'
+                type='text'
+                defaultValue={profile.username}
+              />
+            </div>
+            <div className='text-right'>
+              <button
+                className='rounded-full bg-neutral-600 hover:bg-neutral-500 text-neutral-100 px-4 py-1 disabled:bg-gray-400 disabled:cursor-not-allowed'
+                disabled={loading}
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+          <div
+            className={`text-right mt-3 text-green-600 font-semibold ${
+              success ? 'visible' : 'hidden'
+            }`}
+          >
+            Account updated!
           </div>
-          <div className='mb-5'>
-            <label
-              className='uppercase text-sm font-semibold'
-              htmlFor='username'
-            >
-              Username
-            </label>
-            <input
-              id='username'
-              className='block border w-full rounded px-2 py-1'
-              type='text'
-              defaultValue={profile.username}
-            />
-          </div>
-          <div className='text-right'>
-            <button
-              className='rounded-full bg-neutral-600 hover:bg-neutral-500 text-neutral-100 px-4 py-1 disabled:bg-gray-400 disabled:cursor-not-allowed'
-              disabled={loading}
-            >
-              Submit
-            </button>
-          </div>
-        </form>
-        <div
-          className={`text-right mt-3 text-green-600 font-semibold ${
-            success ? 'visible' : 'hidden'
-          }`}
-        >
-          Account updated!
         </div>
-      </div>
-    </div>
+      </main>
+    </>
   )
 }

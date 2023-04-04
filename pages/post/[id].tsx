@@ -8,6 +8,7 @@ import Upvotes from '@/components/Upvotes'
 import { FaRegComment } from 'react-icons/fa'
 import Image from 'next/image'
 import Link from 'next/link'
+import Head from 'next/head'
 
 export const getServerSideProps = async (context) => {
   const { id } = context.query
@@ -92,76 +93,82 @@ export default function Post({ data }) {
   }
 
   return (
-    <main className='px-3'>
-      <div className='max-w-2xl mx-auto mt-5'>
-        <article className='flex bg-white rounded-md mb-1 border border-neutral-300 overflow-hidden'>
-          <Upvotes id={postId} votes={post_votes} />
-          <div className='p-3 grow'>
-            <div className='flex text-sm gap-2'>
-              <div className='font-semibold hover:underline'>
-                r/{subreddit.name}
-              </div>
-              <div className='text-neutral-500 font-extralight'>
-                Posted by{' '}
-                <Link
-                  className='hover:underline'
-                  href={`/user/${user.username}`}
-                >
-                  u/{user.username}
-                </Link>{' '}
-                {relativeTime}
-              </div>
-            </div>
-            <h2 className='text-xl font-semibold my-1'>{title}</h2>
-            <div>{text}</div>
-            {image_url && (
-              <div className='mt-3'>
-                <Image
-                  src={image_url}
-                  width={500}
-                  height={500}
-                  alt='post image'
-                />
-              </div>
-            )}
-            {session && (
-              <form className='mt-8' onSubmit={handleSubmit}>
-                <label className='text-sm font-light' htmlFor='text'>
-                  Write a comment
-                </label>
-                <textarea
-                  id='text'
-                  className='inline-block border w-full rounded px-2 py-1 placeholder:font-light'
-                  placeholder='What are your thoughts?'
-                  rows={4}
-                />
-                <div className='flex justify-between'>
-                  {session.user.id === user.id && (
-                    <button
-                      className='text-red-800 hover:border-neutral-600 font-semibold hover:underline'
-                      onClick={handleDelete}
-                    >
-                      Delete
-                    </button>
-                  )}
-                  <button className='rounded-full bg-neutral-600 hover:bg-neutral-500 text-neutral-100 px-4 py-1'>
-                    Comment
-                  </button>
+    <>
+      <Head>
+        <title>{title}</title>
+        <meta
+          name='description'
+          content={`The page for the post with title ${title}`}
+        />
+      </Head>
+      <main className='px-3'>
+        <div className='max-w-2xl mx-auto mt-5'>
+          <article className='flex bg-white rounded-md mb-1 border border-neutral-300 overflow-hidden'>
+            <Upvotes id={postId} votes={post_votes} />
+            <div className='p-3 grow'>
+              <div className='flex text-sm gap-2'>
+                <div className='font-semibold hover:underline'>
+                  r/{subreddit.name}
                 </div>
-              </form>
-            )}
-            {/* <div className='inline-flex items-center gap-1 text-neutral-500 font-semibold text-sm'>
-              <FaRegComment size={15} /> {comments.length} comments
-            </div> */}
-          </div>
-        </article>
-        <ul className='mt-5 space-y-1'>
-          {comments.map((comment) => {
-            return <Comment key={comment.id} {...comment} />
-          })}
-        </ul>
-      </div>
-    </main>
+                <div className='text-neutral-500 font-extralight'>
+                  Posted by{' '}
+                  <Link
+                    className='hover:underline'
+                    href={`/user/${user.username}`}
+                  >
+                    u/{user.username}
+                  </Link>{' '}
+                  {relativeTime}
+                </div>
+              </div>
+              <h2 className='text-xl font-semibold my-1'>{title}</h2>
+              <div>{text}</div>
+              {image_url && (
+                <div className='mt-3'>
+                  <Image
+                    src={image_url}
+                    width={500}
+                    height={500}
+                    alt='post image'
+                  />
+                </div>
+              )}
+              {session && (
+                <form className='mt-8' onSubmit={handleSubmit}>
+                  <label className='text-sm font-light' htmlFor='text'>
+                    Write a comment
+                  </label>
+                  <textarea
+                    id='text'
+                    className='inline-block border w-full rounded px-2 py-1 placeholder:font-light'
+                    placeholder='What are your thoughts?'
+                    rows={4}
+                  />
+                  <div className='flex justify-between'>
+                    {session.user.id === user.id && (
+                      <button
+                        className='text-red-800 hover:border-neutral-600 font-semibold hover:underline'
+                        onClick={handleDelete}
+                      >
+                        Delete
+                      </button>
+                    )}
+                    <button className='rounded-full bg-neutral-600 hover:bg-neutral-500 text-neutral-100 px-4 py-1'>
+                      Comment
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </article>
+          <ul className='mt-5 space-y-1'>
+            {comments.map((comment) => {
+              return <Comment key={comment.id} {...comment} />
+            })}
+          </ul>
+        </div>
+      </main>
+    </>
   )
 }
 
