@@ -74,7 +74,6 @@ export default function Login() {
               type='password'
               required
             />
-            {/* <button className='bg-orange-700 text-white w-full rounded-full font-semibold py-3 mt-5'> */}
             <button
               className={`bg-orange-700 text-white w-full rounded-full font-semibold py-3 mt-5 disabled:bg-neutral-400 disabled:cursor-not-allowed`}
               disabled={loading}

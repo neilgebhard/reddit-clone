@@ -16,6 +16,7 @@ export default function Signup() {
     const email = e.target.elements.email.value
     const password = e.target.elements.password.value
     const username = e.target.elements.username.value
+
     try {
       setLoading(true)
       setError(null)
@@ -33,8 +34,15 @@ export default function Signup() {
         router.push(`/confirm?email=${email}`)
       }
     } catch (e) {
-      console.error(e)
-      setError(e.message)
+      if (
+        e.message ===
+        'duplicate key value violates unique constraint "profiles_username_key"'
+      ) {
+        setError('Username is already taken')
+      } else {
+        console.error(e)
+        setError(e.message)
+      }
     } finally {
       setLoading(false)
     }
