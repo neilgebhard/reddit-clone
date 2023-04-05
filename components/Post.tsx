@@ -16,7 +16,7 @@ export default function Post({
 }) {
   const relativeTime = formatTimeAgo(new Date(created_at))
   return (
-    <li className='flex bg-white rounded-md mb-1 border border-neutral-300 overflow-hidden'>
+    <li className='flex bg-white rounded-md mb-1 border overflow-hidden'>
       <Upvotes id={id} votes={post_votes} />
       <div className='grow'>
         <div className='p-3 space-y-1 h-full'>

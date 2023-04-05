@@ -8,6 +8,7 @@ import { BsCheck2, BsChevronDown, BsImage, BsLink } from 'react-icons/bs'
 import ImageUpload from '@/components/ImageUpload'
 import { TbArticle } from 'react-icons/tb'
 import Head from 'next/head'
+import { BeatLoader } from 'react-spinners'
 
 export const getServerSideProps = async () => {
   const { data: subreddits } = await supabase.from('subreddits').select('*')
@@ -23,6 +24,8 @@ export default function CreatePost({ subreddits }) {
   const [selected, setSelected] = useState(subreddits[0])
   const [imageUrl, setImageUrl] = useState(null)
   const [type, setType] = useState(router.query.type || 'post')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -30,36 +33,43 @@ export default function CreatePost({ subreddits }) {
     if (!session) throw new Error('User not signed in.')
 
     const posted_by = session.user.id
-    const title = e.target.elements.title.value
+    const title = e.target.elements.title.value.trim()
 
     let text
     let url
 
     if (type === 'post') {
-      text = e.target.elements.text.value
+      text = e.target.elements.text.value.trim()
     }
 
     if (type === 'link') {
-      url = e.target.elements.link.value
+      url = e.target.elements.link.value.trim()
     }
 
-    const { data, error } = await supabase
-      .from('posts')
-      .insert([
-        {
-          posted_by,
-          title,
-          text,
-          image_url: imageUrl,
-          url,
-          subreddit: selected.id,
-        },
-      ])
-      .select()
-
-    if (error) throw error
-
-    router.push(`/post/${data[0].id}`)
+    try {
+      setLoading(true)
+      setError(null)
+      const { data, error } = await supabase
+        .from('posts')
+        .insert([
+          {
+            posted_by,
+            title,
+            text,
+            image_url: imageUrl,
+            url,
+            subreddit: selected.id,
+          },
+        ])
+        .select()
+      if (error) throw error
+      router.push(`/post/${data[0].id}`)
+    } catch (e) {
+      setError(e.message)
+      console.error(e)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const onUpload = (imageUrl) => {
@@ -74,7 +84,7 @@ export default function CreatePost({ subreddits }) {
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <main className='max-w-2xl mx-auto mt-10'>
+      <main className='max-w-2xl mx-auto mt-10 px-3'>
         <h1 className='text-xl mb-3'>Create a post</h1>
         <hr className='mb-4' />
         <form onSubmit={handleSubmit}>
@@ -130,6 +140,7 @@ export default function CreatePost({ subreddits }) {
                   id='title'
                   className='block border w-full rounded px-2 py-1'
                   type='text'
+                  required
                 />
               </div>
               {type === 'post' && (
@@ -162,14 +173,27 @@ export default function CreatePost({ subreddits }) {
                     className='block border w-full rounded px-2 py-1'
                     type='url'
                     placeholder='https://example.com'
+                    required
                   />
                 </div>
               )}
               <div className='text-right'>
-                <button className='rounded-full bg-neutral-600 hover:bg-neutral-500 text-neutral-100 px-4 py-1'>
-                  Post
+                <button
+                  className='rounded-full bg-neutral-600 hover:bg-neutral-500 text-neutral-100 px-4 py-1 disabled:bg-neutral-400 disabled:cursor-not-allowed'
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <BeatLoader size={10} color='white' />
+                  ) : (
+                    'Create Post'
+                  )}
                 </button>
               </div>
+              {error && (
+                <div className='text-red-700 font-semibold mt-4 text-right'>
+                  Oops! {error}.
+                </div>
+              )}
             </div>
           </div>
         </form>

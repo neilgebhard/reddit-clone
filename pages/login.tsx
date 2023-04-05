@@ -45,8 +45,8 @@ export default function Login() {
         <title>Login</title>
         <meta name='description' content='Log in to your account' />
       </Head>
-      <main className='mt-10'>
-        <div className='max-w-md mx-auto bg-white p-12 rounded-2xl border'>
+      <main className='mt-10 px-3'>
+        <div className='max-w-md mx-auto bg-white p-4 sm:p-12 rounded-2xl border'>
           <h2 className='text-xl font-semibold mb-5'>Login</h2>
           <form onSubmit={handleSubmit}>
             <label

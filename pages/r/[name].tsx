@@ -55,7 +55,7 @@ export default function Subreddit({ posts, subreddits }) {
               >
                 <AiFillPlusCircle className='text-4xl text-neutral-500' />{' '}
                 <input
-                  className='border w-full rounded-md px-3 py-2 bg-neutral-50 hover:bg-white'
+                  className='border w-full rounded px-3 py-2 bg-neutral-50 hover:bg-white'
                   placeholder='Create Post'
                   type='text'
                 />
@@ -68,7 +68,7 @@ export default function Subreddit({ posts, subreddits }) {
               </Link>
             </div>
           )}
-          <div className='flex gap-2'>
+          <div className='flex sm:gap-2'>
             <div className='max-w-2xl grow'>
               <ul>
                 {posts[0].posts.map((post, i) => {
@@ -95,7 +95,7 @@ function Post({
 }) {
   const relativeTime = formatTimeAgo(new Date(created_at))
   return (
-    <li className='flex bg-white rounded-md mb-1 border border-neutral-300 hover:border-neutral-500 cursor-pointer overflow-hidden'>
+    <li className='flex bg-white rounded mb-1 border border-neutral-300 hover:border-neutral-500 cursor-pointer overflow-hidden'>
       <Upvotes id={id} votes={post_votes} />
       <Link className='grow' href={`/post/${id}`}>
         <div className='p-3 space-y-1 h-full'>
@@ -120,7 +120,7 @@ function Post({
 function Subreddits({ subreddits }) {
   return (
     <aside>
-      <div className='bg-white rounded-md border border-neutral-300 p-5 hidden sm:block'>
+      <div className='bg-white rounded border border-neutral-300 p-5 hidden sm:block'>
         <h2 className='text-xl font-bold mb-3'>Subreddits</h2>
         <ul>
           {subreddits.map(({ name }, i) => (

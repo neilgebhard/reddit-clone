@@ -76,7 +76,7 @@ export default function Home({ posts, subreddits }) {
               >
                 <AiFillPlusCircle className='text-4xl text-neutral-500' />{' '}
                 <input
-                  className='border w-full rounded-md px-3 py-2 bg-neutral-50 hover:bg-white'
+                  className='border w-full rounded px-3 py-2 bg-neutral-50 hover:bg-white'
                   placeholder='Create Post'
                   type='text'
                 />
@@ -92,7 +92,7 @@ export default function Home({ posts, subreddits }) {
           <div className='mb-3 bg-white border rounded p-3'>
             <div className='flex gap-3'>
               <button
-                className={`flex items-center gap-2 border border-neutral-300 hover:bg-neutral-200 px-2 py-1 text-lg rounded ${
+                className={`flex items-center gap-2 border hover:bg-neutral-200 px-2 py-1 text-lg rounded ${
                   sort === 'new' && 'bg-neutral-100'
                 }`}
                 onClick={() => handleSort('new')}
@@ -100,7 +100,7 @@ export default function Home({ posts, subreddits }) {
                 <BiNews /> New
               </button>
               <button
-                className={`flex items-center gap-2 border border-neutral-300 hover:bg-neutral-200 px-3 py-1 text-lg rounded ${
+                className={`flex items-center gap-2 border hover:bg-neutral-200 px-3 py-1 text-lg rounded ${
                   sort === 'top' && 'bg-neutral-200'
                 }`}
                 onClick={() => handleSort('top')}
@@ -109,7 +109,7 @@ export default function Home({ posts, subreddits }) {
               </button>
             </div>
           </div>
-          <div className='flex gap-2'>
+          <div className='flex sm:gap-2'>
             <div className='max-w-2xl grow'>
               <ul>
                 {posts.map((post, i) => {
@@ -128,7 +128,7 @@ export default function Home({ posts, subreddits }) {
 function Subreddits({ subreddits }) {
   return (
     <aside>
-      <div className='rounded-md border border-neutral-300 p-5 hidden sm:block'>
+      <div className='rounded border p-5 hidden sm:block'>
         <h2 className='text-sm mb-3 uppercase'>Subreddits</h2>
         <ul>
           {subreddits.map(({ name }, i) => (

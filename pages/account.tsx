@@ -71,7 +71,7 @@ export default function Account({ data }) {
           content='A page to see and update your account details'
         />
       </Head>
-      <main className='max-w-2xl mx-auto mt-10'>
+      <main className='max-w-2xl mx-auto mt-10 px-3'>
         <h1 className='text-xl mb-3'>Account</h1>
         <div className='bg-white rounded p-5 border'>
           <form onSubmit={handleSubmit}>
