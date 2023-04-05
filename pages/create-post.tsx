@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSession } from '@supabase/auth-helpers-react'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
@@ -26,6 +26,11 @@ export default function CreatePost({ subreddits }) {
   const [type, setType] = useState(router.query.type || 'post')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const ref = useRef()
+
+  useEffect(() => {
+    ref.current.focus()
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -133,6 +138,7 @@ export default function CreatePost({ subreddits }) {
                 <label
                   className='uppercase text-sm font-semibold'
                   htmlFor='title'
+                  ref={ref}
                 >
                   Title
                 </label>
