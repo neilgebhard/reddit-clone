@@ -5,6 +5,7 @@ import { FaRegUserCircle } from 'react-icons/fa'
 import { BiLogOut } from 'react-icons/bi'
 import { useRouter } from 'next/router'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
+import Link from 'next/link'
 
 export default function Dropdown() {
   const supabaseClient = useSupabaseClient()
@@ -44,7 +45,7 @@ export default function Dropdown() {
             <div className='px-1 py-1 '>
               <Menu.Item>
                 {({ active }) => (
-                  <a
+                  <Link
                     className={`${
                       active ? 'bg-orange-500 text-white' : 'text-gray-900'
                     } group flex w-full items-center rounded-md px-2 py-2 text-sm cursor-pointer`}
@@ -62,7 +63,7 @@ export default function Dropdown() {
                       />
                     )}
                     Account
-                  </a>
+                  </Link>
                 )}
               </Menu.Item>
               <Menu.Item>
