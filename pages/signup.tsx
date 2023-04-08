@@ -98,7 +98,7 @@ export default function Signup() {
               className={`bg-orange-700 text-white w-full rounded-full font-semibold py-3 mt-5 disabled:bg-neutral-400 disabled:cursor-not-allowed`}
               disabled={loading}
             >
-              {loading ? <BeatLoader size={10} color='white' /> : 'Log In'}
+              {loading ? <BeatLoader size={10} color='white' /> : 'Sign up'}
             </button>
           </form>
           {error && (
