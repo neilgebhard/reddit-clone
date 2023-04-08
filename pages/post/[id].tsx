@@ -132,32 +132,33 @@ export default function Post({ data }) {
                   />
                 </div>
               )}
-              {session && (
-                <form className='mt-8' onSubmit={handleSubmit}>
-                  <label className='text-sm font-light' htmlFor='text'>
-                    Write a comment
-                  </label>
-                  <textarea
-                    id='text'
-                    className='inline-block border w-full rounded px-2 py-1 placeholder:font-light'
-                    placeholder='What are your thoughts?'
-                    rows={4}
-                  />
-                  <div className='flex justify-between'>
-                    {session.user.id === user.id && (
-                      <button
-                        className='text-red-800 hover:border-neutral-600 font-semibold hover:underline'
-                        onClick={handleDelete}
-                      >
-                        Delete
-                      </button>
-                    )}
-                    <button className='rounded-full bg-neutral-600 hover:bg-neutral-500 text-neutral-100 px-4 py-1'>
-                      Comment
+              <form className='mt-8' onSubmit={handleSubmit}>
+                <label className='text-sm font-light' htmlFor='text'>
+                  Write a comment
+                </label>
+                <textarea
+                  id='text'
+                  className='inline-block border w-full rounded px-2 py-1 placeholder:font-light'
+                  placeholder='What are your thoughts?'
+                  rows={4}
+                />
+                <div className='flex justify-between'>
+                  {session?.user.id === user.id && (
+                    <button
+                      className='text-red-800 hover:border-neutral-600 font-semibold hover:underline'
+                      onClick={handleDelete}
+                    >
+                      Delete
                     </button>
-                  </div>
-                </form>
-              )}
+                  )}
+                  <button
+                    className={`rounded-full bg-neutral-600 hover:bg-neutral-500 text-neutral-100 px-4 py-1 disabled:cursor-not-allowed disabled:opacity-50`}
+                    disabled={!session}
+                  >
+                    Comment
+                  </button>
+                </div>
+              </form>
             </div>
           </article>
           <ul className='mt-5 space-y-1'>
