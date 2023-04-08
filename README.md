@@ -8,6 +8,12 @@ To create a full-stack application, I utilized Supabase, Next.js, and Node.js to
 
 Through this project, I was able to demonstrate my proficiency in utilizing cutting-edge technologies to develop a highly functional and robust web application. As a web developer, I am dedicated to staying up-to-date with the latest trends and technologies to provide the best possible web application solutions.
 
+## Demo
+
+[https://reddit-next-supabase.vercel.app/](https://reddit-next-supabase.vercel.app/)
+
+## Overview
+
 - **Framework**: [Next.js](https://nextjs.org/)
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
 - **Database**: [Supabase](https://supabase.com/)
@@ -16,10 +22,7 @@ Through this project, I was able to demonstrate my proficiency in utilizing cutt
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **UI Components**: [Headless UI](https://headlessui.dev/)
 
-## Overview
-
 - `components/*` - Modular, re-usable UI components
-- `lib/*` - Helpful utilities or code for external services
 - `pages/*` - Pre-rendered pages using Next.js routing
 - `public/*` - Static assets including favicons
 
