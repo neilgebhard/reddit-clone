@@ -22,10 +22,6 @@ Through this project, I was able to demonstrate my proficiency in utilizing cutt
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **UI Components**: [Headless UI](https://headlessui.dev/)
 
-- `components/*` - Modular, re-usable UI components
-- `pages/*` - Pre-rendered pages using Next.js routing
-- `public/*` - Static assets including favicons
-
 ## Running Locally
 
 Clone GitHub repository, install the dependencies, and run the development server:
