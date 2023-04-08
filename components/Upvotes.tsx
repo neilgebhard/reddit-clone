@@ -1,4 +1,5 @@
 import { useSupabaseClient, useSession } from '@supabase/auth-helpers-react'
+import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
 import {
   TbArrowBigUpFilled,
@@ -10,6 +11,7 @@ import {
 export default function Upvotes({ id, votes }) {
   const supabaseClient = useSupabaseClient()
   const session = useSession()
+  const router = useRouter()
 
   const [isUpvoted, setIsUpvoted] = useState(false)
   const [isDownvoted, setIsDownvoted] = useState(false)
@@ -31,7 +33,10 @@ export default function Upvotes({ id, votes }) {
   }, [session?.user.id, votes])
 
   const handleUpvote = async () => {
-    if (!session) throw new Error('User not signed in.')
+    if (!session) {
+      router.push('/login')
+      return
+    }
     if (isUpvoted) {
       setIsUpvoted(false)
       setTotal((prev) => prev - 1)
