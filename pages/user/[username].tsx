@@ -27,7 +27,6 @@ export const getServerSideProps = async (context) => {
 
 export default function User({ profile }) {
   const router = useRouter()
-  const { username } = router.query
   const { posts, comments } = profile
 
   return (
@@ -59,17 +58,9 @@ export default function User({ profile }) {
             </span>
           </div>
           <h2 className='text-xl font-semibold mt-5 mb-1'>Posts</h2>
-          <ul>
-            {posts.map((post, i) => {
-              return <Post key={post.id} {...post} />
-            })}
-          </ul>
+          <PostList posts={posts} />
           <h2 className='text-xl font-semibold mt-5 mb-1'>Comments</h2>
-          <ul className='space-y-2'>
-            {comments.map((comment) => {
-              return <Comment key={comment.id} {...comment} />
-            })}
-          </ul>
+          <CommentList comments={comments} />
         </div>
       </main>
     </>
@@ -133,5 +124,41 @@ function Comment({ id, updated_at, user, text, post }) {
         )}
       </div>
     </li>
+  )
+}
+
+function PostList({ posts }) {
+  if (posts.length === 0) {
+    return (
+      <div className='text-center border bg-white rounded p-4 text-neutral-700'>
+        This user has no posts yet.
+      </div>
+    )
+  }
+
+  return (
+    <ul>
+      {posts.map((post, i) => {
+        return <Post key={post.id} {...post} />
+      })}
+    </ul>
+  )
+}
+
+function CommentList({ comments }) {
+  if (comments.length === 0) {
+    return (
+      <div className='text-center border bg-white rounded p-4 text-neutral-700'>
+        This user has no comments yet.
+      </div>
+    )
+  }
+
+  return (
+    <ul className='space-y-2'>
+      {comments.map((comment) => {
+        return <Comment key={comment.id} {...comment} />
+      })}
+    </ul>
   )
 }

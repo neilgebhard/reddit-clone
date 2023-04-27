@@ -106,9 +106,12 @@ export default function Post({ data }) {
             <Upvotes id={postId} votes={post_votes} />
             <div className='p-3 grow'>
               <div className='flex text-sm gap-2'>
-                <div className='font-semibold hover:underline'>
+                <Link
+                  href={`/r/${subreddit.name}`}
+                  className='font-semibold hover:underline'
+                >
                   r/{subreddit.name}
-                </div>
+                </Link>
                 <div className='text-neutral-500 font-extralight'>
                   Posted by{' '}
                   <Link
