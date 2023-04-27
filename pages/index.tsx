@@ -93,7 +93,7 @@ export default function Home({ posts, subreddits }) {
             <div className='flex gap-3'>
               <button
                 className={`flex items-center gap-2 border hover:bg-neutral-200 px-2 py-1 text-lg rounded ${
-                  sort === 'new' && 'bg-neutral-2dw00'
+                  sort === 'new' && 'bg-neutral-200'
                 }`}
                 onClick={() => handleSort('new')}
               >
