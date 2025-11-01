@@ -4,7 +4,7 @@ A full-stack Reddit clone built with Next.js, TypeScript, Supabase, and Tailwind
 
 ## Demo
 
-[https://reddit-next-supabase.vercel.app/](https://reddit-next-supabase.vercel.app/)
+[https://reddit-clone-next-supabase.vercel.app](https://reddit-clone-next-supabase.vercel.app)
 
 ## Overview
 
