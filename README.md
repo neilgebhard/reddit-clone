@@ -2,7 +2,7 @@
 
 A full-featured Reddit-style social platform with posts, user authentication, and threaded comments.
 
-![App Screenshot](images/screenshot.png)
+<img src="images/screenshot.png" width="600" />
 
 ## 🚀 Live Demo
 [View Live Site](https://reddit-clone-next-supabase.vercel.app/)
