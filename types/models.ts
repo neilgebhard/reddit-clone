@@ -1,51 +1,31 @@
 /**
  * Core data models for the Reddit Clone application
+ * All types are derived from the database schema
  */
 
-export interface User {
-  id: string
-  username: string
-  created_at?: string
-}
+import { Database } from '@/schema'
 
-export interface Subreddit {
-  id: number
-  name: string
-  created_at?: string
-}
+// Base types from database schema
+export type User = Database['public']['Tables']['profiles']['Row']
+export type Subreddit = Database['public']['Tables']['subreddits']['Row']
+export type PostVote = Database['public']['Tables']['post_votes']['Row']
 
-export interface PostVote {
-  id: number
-  post_id: number
-  user_id: string
-  is_upvote: boolean
-  created_at?: string
-}
-
-export interface Comment {
-  id: number
-  text: string
-  created_at: string
-  updated_at?: string
-  user_id: string
-  post_id: number
+// Comment with optional user relation
+export type Comment = Database['public']['Tables']['comments']['Row'] & {
   user?: User
-  post?: Post
 }
 
-export interface Post {
-  id: number
-  title: string
-  text?: string | null
-  image_url?: string | null
-  url?: string | null
-  created_at: string
-  posted_by: string
-  subreddit_id?: number
+// Post with all relations
+export type Post = Database['public']['Tables']['posts']['Row'] & {
   user: User
   subreddit: Subreddit
   post_votes: PostVote[]
   comments: Comment[]
+}
+
+// Post with calculated upvotes
+export type PostWithUpvotes = Post & {
+  upvotes: number
 }
 
 // Props interfaces for components
@@ -55,7 +35,7 @@ export interface PostProps {
   title: string
   subreddit: Subreddit
   comments: Comment[]
-  created_at: string
+  created_at: string | null
   post_votes: PostVote[]
   url?: string | null
   text?: string | null
