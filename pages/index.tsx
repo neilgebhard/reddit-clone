@@ -12,10 +12,7 @@ import { BsFire, BsImage, BsLink } from 'react-icons/bs'
 import { GetServerSideProps } from 'next'
 import { Post as PostType, PostWithUpvotes, Subreddit } from '@/types/models'
 
-export const getServerSideProps: GetServerSideProps<{
-  posts: PostType[]
-  subreddits: Subreddit[]
-}> = async () => {
+export const getServerSideProps: GetServerSideProps = async () => {
   const [posts, subreddits] = await Promise.all([
     supabase
       .from('posts')
