@@ -9,8 +9,28 @@ import { useMemo, useState } from 'react'
 import { AiFillPlusCircle } from 'react-icons/ai'
 import { BiNews } from 'react-icons/bi'
 import { BsFire, BsImage, BsLink } from 'react-icons/bs'
+import { GetServerSideProps } from 'next'
+import { Database } from '@/schema'
 
-export const getServerSideProps = async () => {
+type PostVote = Database['public']['Tables']['post_votes']['Row']
+type Comment = Database['public']['Tables']['comments']['Row'] & {
+  user: Database['public']['Tables']['profiles']['Row']
+}
+type PostFromDB = Database['public']['Tables']['posts']['Row'] & {
+  post_votes: PostVote[]
+  user: Database['public']['Tables']['profiles']['Row']
+  comments: Comment[]
+  subreddit: Database['public']['Tables']['subreddits']['Row']
+}
+type PostWithUpvotes = PostFromDB & {
+  upvotes: number
+}
+type Subreddit = Database['public']['Tables']['subreddits']['Row']
+
+export const getServerSideProps: GetServerSideProps<{
+  posts: PostFromDB[]
+  subreddits: Subreddit[]
+}> = async () => {
   const [posts, subreddits] = await Promise.all([
     supabase
       .from('posts')
@@ -26,39 +46,47 @@ export const getServerSideProps = async () => {
   }
 }
 
-const sortByDate = (posts) => {
+const sortByDate = (posts: PostWithUpvotes[]): PostWithUpvotes[] => {
   return posts.sort((a, b) => {
-    return new Date(b.created_at) - new Date(a.created_at)
+    return new Date(b.created_at!).getTime() - new Date(a.created_at!).getTime()
   })
 }
 
-const sortByUpvotes = (posts) => {
+const sortByUpvotes = (posts: PostWithUpvotes[]): PostWithUpvotes[] => {
   return posts.sort((a, b) => {
     return b.upvotes - a.upvotes
   })
 }
 
-export default function Home({ posts, subreddits }) {
-  const session = useSession()
-  const [sort, setSort] = useState('new')
+interface HomeProps {
+  posts: PostFromDB[]
+  subreddits: Subreddit[]
+}
 
-  posts = useMemo(
+export default function Home({ posts: initialPosts, subreddits }: HomeProps) {
+  const session = useSession()
+  const [sort, setSort] = useState<'new' | 'top'>('new')
+
+  const postsWithUpvotes: PostWithUpvotes[] = useMemo(
     () =>
-      posts.map((post) => {
+      initialPosts.map((post) => {
         const upvotes = post.post_votes.reduce((acc, vote) => {
           return acc + (vote.is_upvote ? 1 : -1)
         }, 0)
         return { ...post, upvotes }
       }),
-    [posts]
+    [initialPosts]
   )
 
-  const handleSort = (sortBy) => {
-    if (sortBy === 'new') {
-      posts = sortByDate(posts)
-    } else if (sortBy === 'top') {
-      posts = sortByUpvotes(posts)
+  const sortedPosts = useMemo(() => {
+    if (sort === 'new') {
+      return sortByDate([...postsWithUpvotes])
+    } else {
+      return sortByUpvotes([...postsWithUpvotes])
     }
+  }, [sort, postsWithUpvotes])
+
+  const handleSort = (sortBy: 'new' | 'top') => {
     setSort(sortBy)
   }
 
@@ -114,7 +142,7 @@ export default function Home({ posts, subreddits }) {
           <div className='flex sm:gap-2'>
             <div className='max-w-2xl grow'>
               <ul>
-                {posts.map((post, i) => {
+                {sortedPosts.map((post) => {
                   return <Post key={post.id} {...post} />
                 })}
               </ul>
