@@ -7,8 +7,15 @@ import {
   TbArrowBigDownFilled,
   TbArrowBigDown,
 } from 'react-icons/tb'
+import { PostVote } from '@/types/models'
+import { ROUTES } from '@/constants/routes'
 
-export default function Upvotes({ id, votes }) {
+interface UpvotesProps {
+  id: number
+  votes: PostVote[]
+}
+
+export default function Upvotes({ id, votes }: UpvotesProps) {
   const supabaseClient = useSupabaseClient()
   const session = useSession()
   const router = useRouter()
@@ -34,14 +41,16 @@ export default function Upvotes({ id, votes }) {
 
   const handleUpvote = async () => {
     if (!session) {
-      router.push('/login')
+      router.push(ROUTES.LOGIN)
       return
     }
     if (isUpvoted) {
       setIsUpvoted(false)
       setTotal((prev) => prev - 1)
-      const { id } = votes.find((v) => v.user_id === session.user.id)
-      await supabaseClient.from('post_votes').delete().eq('id', id)
+      const vote = votes.find((v) => v.user_id === session.user.id)
+      if (vote) {
+        await supabaseClient.from('post_votes').delete().eq('id', vote.id)
+      }
     } else {
       setTotal((prev) => (isDownvoted ? prev + 2 : prev + 1))
       setIsUpvoted(true)
@@ -51,7 +60,9 @@ export default function Upvotes({ id, votes }) {
         .upsert({ post_id: id, user_id: session.user.id, is_upvote: true })
         .select()
       if (error) throw error
-      votes.unshift(data[0])
+      if (data && data[0]) {
+        votes.unshift(data[0] as PostVote)
+      }
     }
   }
 
@@ -60,8 +71,10 @@ export default function Upvotes({ id, votes }) {
     if (isDownvoted) {
       setIsDownvoted(false)
       setTotal((prev) => prev + 1)
-      const { id } = votes.find((v) => v.user_id === session.user.id)
-      await supabaseClient.from('post_votes').delete().eq('id', id)
+      const vote = votes.find((v) => v.user_id === session.user.id)
+      if (vote) {
+        await supabaseClient.from('post_votes').delete().eq('id', vote.id)
+      }
     } else {
       setTotal((prev) => (isUpvoted ? prev - 2 : prev - 1))
       setIsUpvoted(false)
@@ -71,7 +84,9 @@ export default function Upvotes({ id, votes }) {
         .upsert({ post_id: id, user_id: session.user.id, is_upvote: false })
         .select()
       if (error) throw error
-      votes.unshift(data[0])
+      if (data && data[0]) {
+        votes.unshift(data[0] as PostVote)
+      }
     }
   }
 
