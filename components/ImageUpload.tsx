@@ -6,10 +6,14 @@ import { BeatLoader } from 'react-spinners'
 
 const imageUuid = uuid()
 
-export default function ImageUpload({ onUpload }) {
+interface ImageUploadProps {
+  onUpload: (fileName: string) => void
+}
+
+export default function ImageUpload({ onUpload }: ImageUploadProps) {
   const supabase = useSupabaseClient()
-  const [imageUrl, setImageUrl] = useState(null)
-  const [uploading, setUploading] = useState(false)
+  const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const [uploading, setUploading] = useState<boolean>(false)
 
   const uploadImage: React.ChangeEventHandler<HTMLInputElement> = async (
     event
@@ -26,8 +30,10 @@ export default function ImageUpload({ onUpload }) {
         .from('images')
         .upload(fileName, file, { upsert: true })
       if (error) throw error
-      setImageUrl(data.path)
-      onUpload(fileName)
+      if (data) {
+        setImageUrl(data.path)
+        onUpload(fileName)
+      }
     } catch (error) {
       console.error(error)
     } finally {
