@@ -10,25 +10,10 @@ import { AiFillPlusCircle } from 'react-icons/ai'
 import { BiNews } from 'react-icons/bi'
 import { BsFire, BsImage, BsLink } from 'react-icons/bs'
 import { GetServerSideProps } from 'next'
-import { Database } from '@/schema'
-
-type PostVote = Database['public']['Tables']['post_votes']['Row']
-type Comment = Database['public']['Tables']['comments']['Row'] & {
-  user: Database['public']['Tables']['profiles']['Row']
-}
-type PostFromDB = Database['public']['Tables']['posts']['Row'] & {
-  post_votes: PostVote[]
-  user: Database['public']['Tables']['profiles']['Row']
-  comments: Comment[]
-  subreddit: Database['public']['Tables']['subreddits']['Row']
-}
-type PostWithUpvotes = PostFromDB & {
-  upvotes: number
-}
-type Subreddit = Database['public']['Tables']['subreddits']['Row']
+import { Post as PostType, PostWithUpvotes, Subreddit } from '@/types/models'
 
 export const getServerSideProps: GetServerSideProps<{
-  posts: PostFromDB[]
+  posts: PostType[]
   subreddits: Subreddit[]
 }> = async () => {
   const [posts, subreddits] = await Promise.all([
@@ -59,7 +44,7 @@ const sortByUpvotes = (posts: PostWithUpvotes[]): PostWithUpvotes[] => {
 }
 
 interface HomeProps {
-  posts: PostFromDB[]
+  posts: PostType[]
   subreddits: Subreddit[]
 }
 
