@@ -1,36 +1,31 @@
-# Reddit clone
+# Reddit Clone
 
-A full-stack Reddit clone built with Next.js, TypeScript, Supabase, and Tailwind CSS. It implements core features including user authentication, post creation, voting, commenting, and subreddit management. The frontend uses Headless UI for accessible components and responsive design, while Supabase handles backend logic and data storage via PostgreSQL. The project is deployed on Vercel and structured for scalability and maintainability.
+A full-featured Reddit-style social platform with posts, user authentication, and threaded comments.
 
-## Demo
+![App Screenshot](images/screenshot.png)
 
-[https://reddit-clone-next-supabase.vercel.app](https://reddit-clone-next-supabase.vercel.app)
+## 🚀 Live Demo
+[View Live Site](https://reddit-clone-next-supabase.vercel.app/)
 
-## Overview
+## ⚡ Features
+- User authentication (sign up, login, logout)
+- Create and manage posts
+- Upvote/downvote system
+- Threaded comments with replies
+- Responsive mobile-first design
 
-- **Framework**: [Next.js](https://nextjs.org/)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Database**: [Supabase](https://supabase.com/)
-- **Authentication**: [Supabase](https://supabase.com/)
-- **Deployment**: [Vercel](https://vercel.com)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **UI Components**: [Headless UI](https://headlessui.dev/)
+## 🛠️ Built With
+- Next.js 14
+- React
+- TypeScript
+- Supabase (PostgreSQL + Auth)
+- Tailwind CSS
 
-## Running Locally
-
-Clone GitHub repository, install the dependencies, and run the development server:
-
+## 📦 Setup
 ```bash
-$ git clone https://github.com/neilgebhard/reddit-next-supabase
-$ cd reddit-next-supabase
-$ npm i
-$ npm run dev
+npm install
+npm run dev
 ```
 
-Create a .env.local file similar to .env.example with the required environment variables.
-
-The app will be run on [http://localhost:3000](http://localhost:3000).
-
-### To generate types from supabase database
-
-npm run update-types
+## 🎯 Why I Built This
+To demonstrate full-stack capabilities including authentication, database design, real-time features, and modern React patterns.
