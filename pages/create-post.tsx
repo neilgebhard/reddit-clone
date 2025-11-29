@@ -10,46 +10,56 @@ import { TbArticle } from 'react-icons/tb'
 import Head from 'next/head'
 import { BeatLoader } from 'react-spinners'
 import { ROUTES } from '@/constants/routes'
+import { GetServerSideProps } from 'next'
+import { Subreddit } from '@/types/models'
 
-export const getServerSideProps = async () => {
+interface SubredditsProps {
+  subreddits: Subreddit[]
+}
+
+export const getServerSideProps: GetServerSideProps = async () => {
   const { data: subreddits } = await supabase.from('subreddits').select('*')
   return {
     props: { subreddits },
   }
 }
 
-export default function CreatePost({ subreddits }) {
+export default function CreatePost({ subreddits }: SubredditsProps) {
   const session = useSession()
   const router = useRouter()
   const supabase = useSupabaseClient()
-  const [selected, setSelected] = useState(subreddits[0])
-  const [imageUrl, setImageUrl] = useState(null)
-  const [type, setType] = useState(router.query.type || 'post')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const ref = useRef()
+  const [selected, setSelected] = useState<Subreddit>(subreddits[0])
+  const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const [type, setType] = useState<string | string[]>(router.query.type || 'post')
+  const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    ref.current.focus()
+    inputRef.current!.focus()
   }, [])
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     if (!session) throw new Error('User not signed in.')
 
+    const form = e.currentTarget
     const posted_by = session.user.id
-    const title = e.target.elements.title.value.trim()
+    const title = form.elements.namedItem('title') as HTMLInputElement
+    const titleValue = title.value.trim()
 
     let text
     let url
 
     if (type === 'post') {
-      text = e.target.elements.text.value.trim()
+      const textElement = form.elements.namedItem('text') as HTMLTextAreaElement
+      text = textElement.value.trim()
     }
 
     if (type === 'link') {
-      url = e.target.elements.link.value.trim()
+      const linkElement = form.elements.namedItem('link') as HTMLInputElement
+      url = linkElement.value.trim()
     }
 
     try {
@@ -60,7 +70,7 @@ export default function CreatePost({ subreddits }) {
         .insert([
           {
             posted_by,
-            title,
+            title: titleValue,
             text,
             image_url: imageUrl,
             url,
@@ -71,14 +81,18 @@ export default function CreatePost({ subreddits }) {
       if (error) throw error
       router.push(ROUTES.POST(data[0].id))
     } catch (e) {
-      setError(e.message)
-      console.error(e)
+      if (e instanceof Error) {
+        setError(e.message)
+        console.error(e)
+      } else {
+        console.error('An unknown error occurred')
+      }
     } finally {
       setLoading(false)
     }
   }
 
-  const onUpload = (imageUrl) => {
+  const onUpload = (imageUrl: string) => {
     setImageUrl(process.env.NEXT_PUBLIC_SUPABASE_IMAGE_BUCKET_URL + imageUrl)
   }
 
@@ -139,7 +153,6 @@ export default function CreatePost({ subreddits }) {
                 <label
                   className='uppercase text-sm font-semibold'
                   htmlFor='title'
-                  ref={ref}
                 >
                   Title
                 </label>
@@ -147,6 +160,7 @@ export default function CreatePost({ subreddits }) {
                   id='title'
                   className='block border w-full rounded px-2 py-1'
                   type='text'
+                  ref={inputRef}
                   required
                 />
               </div>
@@ -209,7 +223,13 @@ export default function CreatePost({ subreddits }) {
   )
 }
 
-function ListBox({ subreddits, selected, setSelected }) {
+interface ListBoxProps {
+  subreddits: Subreddit[]
+  selected: Subreddit
+  setSelected: (subreddit: Subreddit) => void
+}
+
+function ListBox({ subreddits, selected, setSelected }: ListBoxProps) {
   return (
     <>
       <Listbox value={selected} onChange={setSelected}>
@@ -233,7 +253,7 @@ function ListBox({ subreddits, selected, setSelected }) {
             leaveTo='opacity-0'
           >
             <Listbox.Options className='absolute mt-1 max-h-60 w-full max-w-xs overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm'>
-              {subreddits.map((subreddit, i) => (
+              {subreddits.map((subreddit) => (
                 <Listbox.Option
                   key={subreddit.id}
                   className={({ active }) =>
