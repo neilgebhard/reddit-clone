@@ -6,6 +6,7 @@ import { BiLogOut } from 'react-icons/bi'
 import { useRouter } from 'next/router'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import Link from 'next/link'
+import { ROUTES } from '@/constants/routes'
 
 export default function Dropdown() {
   const supabaseClient = useSupabaseClient()
@@ -14,7 +15,7 @@ export default function Dropdown() {
   const handleSignOut = async () => {
     let { error } = await supabaseClient.auth.signOut()
     if (error) throw new Error('Unable to sign out.')
-    router.push('/')
+    router.push(ROUTES.HOME)
   }
 
   return (
@@ -49,7 +50,7 @@ export default function Dropdown() {
                     className={`${
                       active ? 'bg-orange-500 text-white' : 'text-gray-900'
                     } group flex w-full items-center rounded-md px-2 py-2 text-sm cursor-pointer`}
-                    href='/account'
+                    href={ROUTES.ACCOUNT}
                   >
                     {active ? (
                       <FaRegUserCircle

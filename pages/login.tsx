@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import BeatLoader from 'react-spinners/BeatLoader'
+import { ROUTES } from '@/constants/routes'
 
 export default function Login() {
   const router = useRouter()
@@ -30,7 +31,7 @@ export default function Login() {
         password,
       })
       if (error) throw error
-      router.push('/')
+      router.push(ROUTES.HOME)
     } catch (e) {
       console.error(e)
       setError(e.message)
@@ -90,7 +91,7 @@ export default function Login() {
             New to Reddit?{' '}
             <Link
               className='text-blue-500 underline font-semibold'
-              href='/signup'
+              href={ROUTES.SIGNUP}
             >
               Sign up
             </Link>

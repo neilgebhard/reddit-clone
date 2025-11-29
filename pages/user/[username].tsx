@@ -6,6 +6,7 @@ import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
 import { formatTimeAgo } from '@/index'
 import { FaRegComment } from 'react-icons/fa'
 import Link from 'next/link'
+import { ROUTES } from '@/constants/routes'
 
 export const getServerSideProps = async (context) => {
   const { username } = context.query
@@ -48,7 +49,7 @@ export default function User({ profile }) {
               <div className='text-neutral-500 text-sm'>
                 <Link
                   className='hover:underline'
-                  href={`/user/${profile.username}`}
+                  href={ROUTES.USER(profile.username)}
                 >
                   u/{profile.username}
                 </Link>
@@ -88,13 +89,13 @@ function Comment({ id, updated_at, user, text, post }) {
         <FaRegComment className='text-lg inline mr-1' />{' '}
         <Link
           className='text-blue-400 hover:underline'
-          href={`/user/${user.username}`}
+          href={ROUTES.USER(user.username)}
         >
           {user.username}
         </Link>{' '}
         commented on{' '}
         <Link
-          href={`/post/${post.id}`}
+          href={ROUTES.POST(post.id)}
           className='text-neutral-800 hover:underline'
         >
           {post.title}
@@ -102,7 +103,7 @@ function Comment({ id, updated_at, user, text, post }) {
         •{' '}
         <Link
           className='hover:underline text-neutral-700 font-semibold'
-          href={`/r/${post.subreddit.name}`}
+          href={ROUTES.SUBREDDIT(post.subreddit.name)}
         >
           r/{post.subreddit.name}
         </Link>

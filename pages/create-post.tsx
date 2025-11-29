@@ -9,6 +9,7 @@ import ImageUpload from '@/components/ImageUpload'
 import { TbArticle } from 'react-icons/tb'
 import Head from 'next/head'
 import { BeatLoader } from 'react-spinners'
+import { ROUTES } from '@/constants/routes'
 
 export const getServerSideProps = async () => {
   const { data: subreddits } = await supabase.from('subreddits').select('*')
@@ -68,7 +69,7 @@ export default function CreatePost({ subreddits }) {
         ])
         .select()
       if (error) throw error
-      router.push(`/post/${data[0].id}`)
+      router.push(ROUTES.POST(data[0].id))
     } catch (e) {
       setError(e.message)
       console.error(e)

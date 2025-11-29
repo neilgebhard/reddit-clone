@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import Head from 'next/head'
 import { BeatLoader } from 'react-spinners'
+import { ROUTES } from '@/constants/routes'
 
 export default function Signup() {
   const router = useRouter()
@@ -110,7 +111,7 @@ export default function Signup() {
             Have an account?{' '}
             <Link
               className='text-blue-500 underline font-semibold'
-              href='/login'
+              href={ROUTES.LOGIN}
             >
               Log in
             </Link>
