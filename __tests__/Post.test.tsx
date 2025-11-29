@@ -1,41 +1,42 @@
 import { render, screen } from '@testing-library/react'
 import Post from '../components/Post'
+import { User, Subreddit, Comment, PostVote, PostProps } from '../types/models'
 
 // Mock the Upvotes component
 jest.mock('../components/Upvotes', () => {
-  return function MockUpvotes({ id, votes }: { id: number; votes: any[] }) {
+  return function MockUpvotes({ id, votes }: { id: number; votes: PostVote[] }) {
     return <div data-testid="upvotes-mock">Upvotes: {votes.length}</div>
   }
 })
 
 // Mock the formatTimeAgo function
 jest.mock('../index', () => ({
-  formatTimeAgo: jest.fn((date) => '2 hours ago'),
+  formatTimeAgo: jest.fn(() => '2 hours ago'),
 }))
 
 describe('Post Component', () => {
-  const mockUser = {
+  const mockUser: User = {
     id: 'user-123',
     username: 'testuser',
   }
 
-  const mockSubreddit = {
+  const mockSubreddit: Subreddit = {
     id: 1,
     name: 'technology',
   }
 
-  const mockComments = [
-    { id: 1, text: 'Comment 1' },
-    { id: 2, text: 'Comment 2' },
-    { id: 3, text: 'Comment 3' },
+  const mockComments: Comment[] = [
+    { id: 1, text: 'Comment 1', created_at: '2024-01-15T10:00:00Z', user_id: 'user-1', post_id: 123 },
+    { id: 2, text: 'Comment 2', created_at: '2024-01-15T10:00:00Z', user_id: 'user-2', post_id: 123 },
+    { id: 3, text: 'Comment 3', created_at: '2024-01-15T10:00:00Z', user_id: 'user-3', post_id: 123 },
   ]
 
-  const mockPostVotes = [
-    { id: 1, is_upvote: true },
-    { id: 2, is_upvote: false },
+  const mockPostVotes: PostVote[] = [
+    { id: 1, is_upvote: true, post_id: 123, user_id: 'user-1' },
+    { id: 2, is_upvote: false, post_id: 123, user_id: 'user-2' },
   ]
 
-  const defaultProps = {
+  const defaultProps: PostProps = {
     id: 123,
     user: mockUser,
     title: 'Test Post Title',
@@ -127,9 +128,9 @@ describe('Post Component', () => {
   })
 
   it('should display "1 comments" for a single comment', () => {
-    const propsWithOneComment = {
+    const propsWithOneComment: PostProps = {
       ...defaultProps,
-      comments: [{ id: 1, text: 'Single comment' }],
+      comments: [{ id: 1, text: 'Single comment', created_at: '2024-01-15T10:00:00Z', user_id: 'user-1', post_id: 123 }],
     }
     render(<Post {...propsWithOneComment} />)
 
@@ -137,7 +138,7 @@ describe('Post Component', () => {
   })
 
   it('should display "0 comments" when there are no comments', () => {
-    const propsWithNoComments = {
+    const propsWithNoComments: PostProps = {
       ...defaultProps,
       comments: [],
     }
