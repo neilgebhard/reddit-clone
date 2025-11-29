@@ -4,6 +4,7 @@ import { useSession } from '@supabase/auth-helpers-react'
 import { supabase } from '@/lib/supabaseClient'
 import Post from '@/components/Post'
 import SubredditsSidebar from '@/components/SubredditsSidebar'
+import { ROUTES } from '@/constants/routes'
 import { useMemo, useState } from 'react'
 import { AiFillPlusCircle } from 'react-icons/ai'
 import { BiNews } from 'react-icons/bi'
@@ -73,7 +74,7 @@ export default function Home({ posts, subreddits }) {
             <div className='flex items-center gap-2 mb-3 bg-white p-2 border rounded'>
               <Link
                 className='grow flex items-center gap-2'
-                href='/create-post'
+                href={ROUTES.CREATE_POST}
               >
                 <AiFillPlusCircle className='text-4xl text-neutral-500' />{' '}
                 <input
@@ -82,10 +83,10 @@ export default function Home({ posts, subreddits }) {
                   type='text'
                 />
               </Link>
-              <Link href='/create-post?type=image'>
+              <Link href={ROUTES.CREATE_POST_IMAGE}>
                 <BsImage className='text-2xl text-neutral-500 hover:bg-neutral-100 cursor-pointer h-10 w-10 p-2 rounded' />
               </Link>
-              <Link href='/create-post?type=link'>
+              <Link href={ROUTES.CREATE_POST_LINK}>
                 <BsLink className='text-2xl text-neutral-500 hover:bg-neutral-100 cursor-pointer h-10 w-10 p-2 rounded' />
               </Link>
             </div>
