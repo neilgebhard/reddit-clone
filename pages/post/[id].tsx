@@ -8,8 +8,14 @@ import Upvotes from '@/components/Upvotes'
 import Image from 'next/image'
 import Link from 'next/link'
 import Head from 'next/head'
+import { GetServerSideProps } from 'next'
+import { Post as PostType, Comment as CommentProps } from '@/types/models'
 
-export const getServerSideProps = async (context) => {
+interface PostPageProps {
+  data: PostType
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.query
 
   let { data, error } = await supabase
@@ -23,12 +29,12 @@ export const getServerSideProps = async (context) => {
   if (error) console.error(error)
 
   return {
-    props: { data },
+    props: { data: data as PostType },
   }
 }
 
-export default function Post({ data }) {
-  const [post, setPost] = useState(data)
+export default function Post({ data }: PostPageProps) {
+  const [post, setPost] = useState<PostType>(data)
   const session = useSession()
   const router = useRouter()
   const { id } = router.query
@@ -47,13 +53,15 @@ export default function Post({ data }) {
   } = post
   const relativeTime = formatTimeAgo(created_at)
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     if (!session) throw new Error('User is not signed in.')
 
+    const form = e.currentTarget
     const user_id = session.user.id
-    const text = e.target.elements.text.value
+    const textElement = form.elements.namedItem('text') as HTMLTextAreaElement
+    const text = textElement.value
 
     if (!text) return
 
@@ -68,7 +76,7 @@ export default function Post({ data }) {
 
     if (error) throw error
 
-    e.target.elements.text.value = ''
+    textElement.value = ''
 
     let { data } = await supabase
       .from('posts')
@@ -78,7 +86,7 @@ export default function Post({ data }) {
       .eq('id', id)
       .single()
 
-    setPost(data)
+    if (data) setPost(data as PostType)
   }
 
   const handleDelete = () => {
@@ -175,13 +183,13 @@ export default function Post({ data }) {
   )
 }
 
-function Comment({ id, updated_at, user, text }) {
+function Comment({ id, updated_at, user, text }: CommentProps) {
   const session = useSession()
   const supabaseClient = useSupabaseClient()
 
   const handleDelete = async () => {
     if (confirm('Are you sure you want to delete this comment?')) {
-      const { data, error } = await supabaseClient
+      const { error } = await supabaseClient
         .from('comments')
         .delete()
         .eq('id', id)
@@ -189,6 +197,8 @@ function Comment({ id, updated_at, user, text }) {
       window.location.reload()
     }
   }
+
+  if (!user) return null
 
   return (
     <li className='space-y-1 py-3 rounded'>
