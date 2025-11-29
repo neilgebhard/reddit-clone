@@ -9,6 +9,7 @@ import { useRouter } from 'next/router'
 import { AiFillPlusCircle } from 'react-icons/ai'
 import { BsImage, BsLink } from 'react-icons/bs'
 import Post from '@/components/Post'
+import SubredditsSidebar from '@/components/SubredditsSidebar'
 
 export const getServerSideProps = async (context) => {
   const { name } = context.query
@@ -77,27 +78,10 @@ export default function Subreddit({ posts, subreddits }) {
                 })}
               </ul>
             </div>
-            <Subreddits subreddits={subreddits} />
+            <SubredditsSidebar subreddits={subreddits} />
           </div>
         </div>
       </main>
     </>
-  )
-}
-
-function Subreddits({ subreddits }) {
-  return (
-    <aside>
-      <div className='bg-white rounded border border-neutral-300 p-5 hidden sm:block'>
-        <h2 className='text-xl font-bold mb-3'>Subreddits</h2>
-        <ul>
-          {subreddits.map(({ name }, i) => (
-            <Link className='block hover:underline' href={`/r/${name}`} key={i}>
-              /r/{name}
-            </Link>
-          ))}
-        </ul>
-      </div>
-    </aside>
   )
 }

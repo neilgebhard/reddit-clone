@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useSession } from '@supabase/auth-helpers-react'
 import { supabase } from '@/lib/supabaseClient'
 import Post from '@/components/Post'
+import SubredditsSidebar from '@/components/SubredditsSidebar'
 import { useMemo, useState } from 'react'
 import { AiFillPlusCircle } from 'react-icons/ai'
 import { BiNews } from 'react-icons/bi'
@@ -117,27 +118,10 @@ export default function Home({ posts, subreddits }) {
                 })}
               </ul>
             </div>
-            <Subreddits subreddits={subreddits} />
+            <SubredditsSidebar subreddits={subreddits} />
           </div>
         </div>
       </main>
     </>
-  )
-}
-
-function Subreddits({ subreddits }) {
-  return (
-    <aside>
-      <div className='rounded border p-5 hidden sm:block'>
-        <h2 className='text-sm mb-3 uppercase'>Subreddits</h2>
-        <ul>
-          {subreddits.map(({ name }, i) => (
-            <Link className='block hover:underline' href={`/r/${name}`} key={i}>
-              /r/{name}
-            </Link>
-          ))}
-        </ul>
-      </div>
-    </aside>
   )
 }
