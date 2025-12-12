@@ -24,11 +24,13 @@ describe('Post Component', () => {
   const mockUser: User = {
     id: 'user-123',
     username: 'testuser',
+    updated_at: '2024-01-15T10:00:00Z',
   }
 
   const mockSubreddit: Subreddit = {
     id: 1,
     name: 'technology',
+    created_at: '2024-01-15T10:00:00Z',
   }
 
   const mockComments: Comment[] = [
@@ -36,6 +38,7 @@ describe('Post Component', () => {
       id: 1,
       text: 'Comment 1',
       created_at: '2024-01-15T10:00:00Z',
+      updated_at: '2024-01-15T10:00:00Z',
       user_id: 'user-1',
       post_id: 123,
     },
@@ -43,14 +46,15 @@ describe('Post Component', () => {
       id: 2,
       text: 'Comment 2',
       created_at: '2024-01-15T10:00:00Z',
+      updated_at: '2024-01-15T10:00:00Z',
       user_id: 'user-2',
       post_id: 123,
     },
   ]
 
   const mockPostVotes: PostVote[] = [
-    { id: 1, is_upvote: true, post_id: 123, user_id: 'user-1' },
-    { id: 2, is_upvote: false, post_id: 123, user_id: 'user-2' },
+    { id: 1, is_upvote: true, post_id: 123, user_id: 'user-1', created_at: '2024-01-15T10:00:00Z' },
+    { id: 2, is_upvote: false, post_id: 123, user_id: 'user-2', created_at: '2024-01-15T10:00:00Z' },
   ]
 
   const defaultProps: PostProps = {

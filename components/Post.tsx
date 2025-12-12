@@ -16,7 +16,7 @@ export default function Post({
   post_votes,
   url,
 }: PostProps) {
-  const relativeTime = formatTimeAgo(new Date(created_at))
+  const relativeTime = formatTimeAgo(created_at ?? new Date().toISOString())
   return (
     <li className='flex bg-white rounded-md mb-1 border overflow-hidden'>
       <Upvotes id={id} votes={post_votes} />
@@ -31,7 +31,7 @@ export default function Post({
             </Link>
             <div className='text-neutral-500 font-extralight'>
               Posted by{' '}
-              <Link className='hover:underline' href={ROUTES.USER(user.username)}>
+              <Link className='hover:underline' href={ROUTES.USER(user.username ?? '')}>
                 u/{user.username}
               </Link>{' '}
               {relativeTime}

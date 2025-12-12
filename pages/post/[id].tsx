@@ -51,7 +51,7 @@ export default function Post({ data }: PostPageProps) {
     subreddit,
     image_url,
   } = post
-  const relativeTime = formatTimeAgo(created_at)
+  const relativeTime = formatTimeAgo(created_at ?? new Date().toISOString())
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -187,6 +187,8 @@ function Comment({ id, updated_at, user, text }: CommentProps) {
   const session = useSession()
   const supabaseClient = useSupabaseClient()
 
+  if (!user) return null
+
   const handleDelete = async () => {
     if (confirm('Are you sure you want to delete this comment?')) {
       const { error } = await supabaseClient
@@ -204,7 +206,7 @@ function Comment({ id, updated_at, user, text }: CommentProps) {
     <li className='space-y-1 py-3 rounded'>
       <div className='text-sm'>
         <span className='font-semibold'>{user.username}</span>{' '}
-        <span className='text-neutral-500'>{formatTimeAgo(updated_at)}</span>
+        <span className='text-neutral-500'>{formatTimeAgo(updated_at ?? new Date().toISOString())}</span>
       </div>
       <div>{text}</div>
       <div className='flex justify-between'>

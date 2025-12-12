@@ -43,7 +43,7 @@ export default function Account({ data }: AccountProps) {
   const session = useSession()
   const supabase = useSupabaseClient()
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     if (!session) throw new Error('User not signed in.')
@@ -51,7 +51,8 @@ export default function Account({ data }: AccountProps) {
     try {
       setLoading(true)
       setSuccess(false)
-      const username = e.target.username.value
+      const form = e.currentTarget
+      const username = (form.elements.namedItem('username') as HTMLInputElement).value
       const { data, error } = await supabase
         .from('profiles')
         .update({
@@ -107,7 +108,7 @@ export default function Account({ data }: AccountProps) {
                 id='username'
                 className='block border w-full rounded px-2 py-1'
                 type='text'
-                defaultValue={profile.username}
+                defaultValue={profile.username ?? ''}
               />
             </div>
             <div className='text-right'>

@@ -9,14 +9,15 @@ import { ROUTES } from '@/constants/routes'
 export default function Signup() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const email = e.target.elements.email.value
-    const password = e.target.elements.password.value
-    const username = e.target.elements.username.value
+    const form = e.currentTarget
+    const email = (form.elements.namedItem('email') as HTMLInputElement).value
+    const password = (form.elements.namedItem('password') as HTMLInputElement).value
+    const username = (form.elements.namedItem('username') as HTMLInputElement).value
 
     try {
       setLoading(true)
@@ -36,13 +37,16 @@ export default function Signup() {
       }
     } catch (e) {
       if (
+        e instanceof Error &&
         e.message ===
-        'duplicate key value violates unique constraint "profiles_username_key"'
+          'duplicate key value violates unique constraint "profiles_username_key"'
       ) {
         setError('Username is already taken')
-      } else {
+      } else if (e instanceof Error) {
         console.error(e)
         setError(e.message)
+      } else {
+        setError('An unknown error occurred')
       }
     } finally {
       setLoading(false)

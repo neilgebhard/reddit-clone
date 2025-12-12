@@ -11,8 +11,17 @@ import { BsImage, BsLink } from 'react-icons/bs'
 import Post from '@/components/Post'
 import SubredditsSidebar from '@/components/SubredditsSidebar'
 import { ROUTES } from '@/constants/routes'
+import { GetServerSidePropsContext } from 'next'
+import { Post as PostType, Subreddit as SubredditType } from '@/types/models'
 
-export const getServerSideProps = async (context) => {
+type SubredditWithPosts = SubredditType & { posts: PostType[] }
+
+interface SubredditPageProps {
+  posts: SubredditWithPosts[] | null
+  subreddits: SubredditType[] | null
+}
+
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   const { name } = context.query
   const [posts, subreddits] = await Promise.all([
     supabase
@@ -35,7 +44,7 @@ export const getServerSideProps = async (context) => {
   }
 }
 
-export default function Subreddit({ posts, subreddits }) {
+export default function Subreddit({ posts, subreddits }: SubredditPageProps) {
   const session = useSession()
   const router = useRouter()
   const { name } = router.query
@@ -74,12 +83,12 @@ export default function Subreddit({ posts, subreddits }) {
           <div className='flex sm:gap-2'>
             <div className='max-w-2xl grow'>
               <ul>
-                {posts[0].posts.map((post, i) => {
+                {posts?.[0]?.posts?.map((post: PostType) => {
                   return <Post key={post.id} {...post} />
                 })}
               </ul>
             </div>
-            <SubredditsSidebar subreddits={subreddits} />
+            <SubredditsSidebar subreddits={subreddits ?? []} />
           </div>
         </div>
       </main>

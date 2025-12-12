@@ -7,8 +7,23 @@ import { formatTimeAgo } from '@/index'
 import { FaRegComment } from 'react-icons/fa'
 import Link from 'next/link'
 import { ROUTES } from '@/constants/routes'
+import { GetServerSidePropsContext } from 'next'
+import { Post as PostType, Comment as CommentType, User as UserType, Subreddit } from '@/types/models'
 
-export const getServerSideProps = async (context) => {
+type CommentWithPost = CommentType & {
+  post: PostType
+}
+
+type Profile = UserType & {
+  posts: PostType[]
+  comments: CommentWithPost[]
+}
+
+interface UserPageProps {
+  profile: Profile
+}
+
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   const { username } = context.query
   const { data: profile, error } = await supabase
     .from('profiles')
@@ -26,9 +41,11 @@ export const getServerSideProps = async (context) => {
   }
 }
 
-export default function User({ profile }) {
+export default function User({ profile }: UserPageProps) {
   const router = useRouter()
   const { posts, comments } = profile
+
+  if (!profile) return null
 
   return (
     <>
@@ -49,12 +66,12 @@ export default function User({ profile }) {
               <div className='text-neutral-500 text-sm'>
                 <Link
                   className='hover:underline'
-                  href={ROUTES.USER(profile.username)}
+                  href={ROUTES.USER(profile.username ?? '')}
                 >
                   u/{profile.username}
                 </Link>
                 <span> • </span>
-                <span>{formatTimeAgo(profile.created_at)}</span>
+                <span>{formatTimeAgo(profile.updated_at ?? new Date().toISOString())}</span>
               </div>
             </span>
           </div>
@@ -68,7 +85,7 @@ export default function User({ profile }) {
   )
 }
 
-function Comment({ id, updated_at, user, text, post }) {
+function Comment({ id, updated_at, user, text, post }: CommentWithPost) {
   const session = useSession()
   const supabaseClient = useSupabaseClient()
 
@@ -89,9 +106,9 @@ function Comment({ id, updated_at, user, text, post }) {
         <FaRegComment className='text-lg inline mr-1' />{' '}
         <Link
           className='text-blue-400 hover:underline'
-          href={ROUTES.USER(user.username)}
+          href={ROUTES.USER(user?.username ?? '')}
         >
-          {user.username}
+          {user?.username}
         </Link>{' '}
         commented on{' '}
         <Link
@@ -110,12 +127,12 @@ function Comment({ id, updated_at, user, text, post }) {
       </div>
       <div className='border my-4' />
       <div className='text-sm mt-2'>
-        <span>{user.username}</span>
-        <span className='text-neutral-400'> • {formatTimeAgo(updated_at)}</span>
+        <span>{user?.username}</span>
+        <span className='text-neutral-400'> • {formatTimeAgo(updated_at ?? new Date().toISOString())}</span>
       </div>
       <div>{text}</div>
       <div className='flex justify-between'>
-        {session?.user.id === user.id && (
+        {session?.user.id === user?.id && (
           <button
             className='text-red-500 font-semibold text-sm hover:underline'
             onClick={handleDelete}
@@ -128,7 +145,7 @@ function Comment({ id, updated_at, user, text, post }) {
   )
 }
 
-function PostList({ posts }) {
+function PostList({ posts }: { posts: PostType[] }) {
   if (posts.length === 0) {
     return (
       <div className='text-center border bg-white rounded p-4 text-neutral-700'>
@@ -139,14 +156,14 @@ function PostList({ posts }) {
 
   return (
     <ul>
-      {posts.map((post, i) => {
+      {posts.map((post: PostType) => {
         return <Post key={post.id} {...post} />
       })}
     </ul>
   )
 }
 
-function CommentList({ comments }) {
+function CommentList({ comments }: { comments: CommentWithPost[] }) {
   if (comments.length === 0) {
     return (
       <div className='text-center border bg-white rounded p-4 text-neutral-700'>
@@ -157,7 +174,7 @@ function CommentList({ comments }) {
 
   return (
     <ul className='space-y-2'>
-      {comments.map((comment) => {
+      {comments.map((comment: CommentWithPost) => {
         return <Comment key={comment.id} {...comment} />
       })}
     </ul>

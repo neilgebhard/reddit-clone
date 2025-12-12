@@ -2,7 +2,7 @@ const formatter = new Intl.RelativeTimeFormat(undefined, {
   numeric: 'auto',
 })
 
-const DIVISIONS = [
+const DIVISIONS: { amount: number; name: Intl.RelativeTimeFormatUnit }[] = [
   { amount: 60, name: 'seconds' },
   { amount: 60, name: 'minutes' },
   { amount: 24, name: 'hours' },
@@ -12,8 +12,8 @@ const DIVISIONS = [
   { amount: Number.POSITIVE_INFINITY, name: 'years' },
 ]
 
-export function formatTimeAgo(date) {
-  let duration = (new Date(date) - new Date()) / 1000
+export function formatTimeAgo(date: string | Date): string {
+  let duration = (new Date(date).getTime() - new Date().getTime()) / 1000
 
   for (let i = 0; i < DIVISIONS.length; i++) {
     const division = DIVISIONS[i]
@@ -22,4 +22,5 @@ export function formatTimeAgo(date) {
     }
     duration /= division.amount
   }
+  return formatter.format(Math.round(duration), 'years')
 }

@@ -9,32 +9,37 @@ import { ROUTES } from '@/constants/routes'
 export default function Login() {
   const router = useRouter()
   const supabaseClient = useSupabaseClient()
-  const ref = useRef()
+  const ref = useRef<HTMLInputElement>(null)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState()
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    ref.current.focus()
+    ref.current?.focus()
   }, [])
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const email = e.target.elements.email.value
-    const password = e.target.elements.password.value
+    const form = e.currentTarget
+    const email = form.elements.namedItem('email') as HTMLInputElement
+    const password = form.elements.namedItem('password') as HTMLInputElement
 
     try {
       setLoading(true)
       setError(null)
       let { data, error } = await supabaseClient.auth.signInWithPassword({
-        email,
-        password,
+        email: email.value,
+        password: password.value,
       })
       if (error) throw error
       router.push(ROUTES.HOME)
     } catch (e) {
       console.error(e)
-      setError(e.message)
+      if (e instanceof Error) {
+        setError(e.message)
+      } else {
+        setError('An unknown error occurred')
+      }
     } finally {
       setLoading(false)
     }

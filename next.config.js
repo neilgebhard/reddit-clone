@@ -4,9 +4,6 @@ const nextConfig = {
   images: {
     domains: ['zusvyfkzywauthictelq.supabase.co'],
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   output: 'standalone',
 }
 
