@@ -2,6 +2,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useSession } from '@supabase/auth-helpers-react'
 import { supabase } from '@/lib/supabaseClient'
+import { POST_SELECT_QUERY } from '@/lib/supabaseQueries'
 import Post from '@/components/Post'
 import SubredditsSidebar from '@/components/SubredditsSidebar'
 import { ROUTES } from '@/constants/routes'
@@ -16,9 +17,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   const [posts, subreddits] = await Promise.all([
     supabase
       .from('posts')
-      .select(
-        '*, post_votes(*), user:posted_by(*), comments(*, user:user_id(*)), subreddit(*)'
-      )
+      .select(POST_SELECT_QUERY)
       .order('created_at', { ascending: false }),
     supabase.from('subreddits').select('*'),
   ])

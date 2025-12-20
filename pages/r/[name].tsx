@@ -2,6 +2,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useSession } from '@supabase/auth-helpers-react'
 import { supabase } from '@/lib/supabaseClient'
+import { NESTED_POSTS_QUERY } from '@/lib/supabaseQueries'
 import Upvotes from '@/components/Upvotes'
 import { formatTimeAgo } from '@/index'
 import { FaRegComment } from 'react-icons/fa'
@@ -26,15 +27,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
   const [posts, subreddits] = await Promise.all([
     supabase
       .from('subreddits')
-      .select(
-        `
-        *, 
-        posts(*, 
-            post_votes(*),
-            user:posted_by(*), 
-            comments(*, user:user_id(*)),
-            subreddit(*))`
-      )
+      .select(`*, ${NESTED_POSTS_QUERY}`)
       .eq('name', name),
     supabase.from('subreddits').select('*'),
   ])

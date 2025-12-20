@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import { supabase } from '@/lib/supabaseClient'
+import { POST_FIELDS } from '@/lib/supabaseQueries'
 import { useRouter } from 'next/router'
 import Post from '@/components/Post'
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
@@ -28,10 +29,9 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
   const { data: profile, error } = await supabase
     .from('profiles')
     .select(
-      `*, 
-      comments(*, user:user_id(*), post:posts(*, subreddit(*))), 
-      posts!posts_posted_by_fkey(*, post_votes(*), user:posted_by(*), comments(*, user:user_id(*)), 
-      subreddit(*))`
+      `*,
+      comments(*, user:user_id(*), post:posts(*, subreddit(*))),
+      posts!posts_posted_by_fkey(${POST_FIELDS})`
     )
     .eq('username', username)
     .single()

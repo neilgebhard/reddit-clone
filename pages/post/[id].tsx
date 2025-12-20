@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabaseClient'
+import { POST_SELECT_QUERY } from '@/lib/supabaseQueries'
 import { formatTimeAgo } from '../..'
 import { useSession } from '@supabase/auth-helpers-react'
 import { useState } from 'react'
@@ -20,9 +21,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   let { data, error } = await supabase
     .from('posts')
-    .select(
-      '*, post_votes(*), user:posted_by(*), comments(*, user:user_id(*)), subreddit(*)'
-    )
+    .select(POST_SELECT_QUERY)
     .eq('id', id)
     .single()
 
@@ -80,9 +79,7 @@ export default function Post({ data }: PostPageProps) {
 
     let { data } = await supabase
       .from('posts')
-      .select(
-        '*, post_votes(*), user:posted_by(*), comments(*, user:user_id(*)), subreddit(*)'
-      )
+      .select(POST_SELECT_QUERY)
       .eq('id', id)
       .single()
 
