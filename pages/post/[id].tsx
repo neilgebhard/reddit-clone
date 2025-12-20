@@ -6,11 +6,12 @@ import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import Upvotes from '@/components/Upvotes'
+import Comment from '@/components/Comment'
 import Image from 'next/image'
 import Link from 'next/link'
 import Head from 'next/head'
 import { GetServerSideProps } from 'next'
-import { Post as PostType, Comment as CommentProps } from '@/types/models'
+import { Post as PostType } from '@/types/models'
 
 interface PostPageProps {
   data: PostType
@@ -177,45 +178,5 @@ export default function Post({ data }: PostPageProps) {
         </div>
       </main>
     </>
-  )
-}
-
-function Comment({ id, updated_at, user, text }: CommentProps) {
-  const session = useSession()
-  const supabaseClient = useSupabaseClient()
-
-  if (!user) return null
-
-  const handleDelete = async () => {
-    if (confirm('Are you sure you want to delete this comment?')) {
-      const { error } = await supabaseClient
-        .from('comments')
-        .delete()
-        .eq('id', id)
-      if (error) throw error
-      window.location.reload()
-    }
-  }
-
-  if (!user) return null
-
-  return (
-    <li className='space-y-1 py-3 rounded'>
-      <div className='text-sm'>
-        <span className='font-semibold'>{user.username}</span>{' '}
-        <span className='text-neutral-500'>{formatTimeAgo(updated_at ?? new Date().toISOString())}</span>
-      </div>
-      <div>{text}</div>
-      <div className='flex justify-between'>
-        {session?.user.id === user.id && (
-          <button
-            className='text-red-700 font-semibold text-sm hover:underline'
-            onClick={handleDelete}
-          >
-            Delete
-          </button>
-        )}
-      </div>
-    </li>
   )
 }
