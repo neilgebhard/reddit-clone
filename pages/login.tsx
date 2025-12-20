@@ -2,16 +2,16 @@ import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import BeatLoader from 'react-spinners/BeatLoader'
 import { ROUTES } from '@/constants/routes'
+import { useFormSubmit } from '@/hooks/useFormSubmit'
 
 export default function Login() {
   const router = useRouter()
   const supabaseClient = useSupabaseClient()
   const ref = useRef<HTMLInputElement>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const { loading, error, executeSubmit } = useFormSubmit()
 
   useEffect(() => {
     ref.current?.focus()
@@ -24,25 +24,14 @@ export default function Login() {
     const email = form.elements.namedItem('email') as HTMLInputElement
     const password = form.elements.namedItem('password') as HTMLInputElement
 
-    try {
-      setLoading(true)
-      setError(null)
-      let { data, error } = await supabaseClient.auth.signInWithPassword({
+    await executeSubmit(async () => {
+      const { error } = await supabaseClient.auth.signInWithPassword({
         email: email.value,
         password: password.value,
       })
       if (error) throw error
       router.push(ROUTES.HOME)
-    } catch (e) {
-      console.error(e)
-      if (e instanceof Error) {
-        setError(e.message)
-      } else {
-        setError('An unknown error occurred')
-      }
-    } finally {
-      setLoading(false)
-    }
+    })
   }
 
   return (

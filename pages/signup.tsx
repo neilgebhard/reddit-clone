@@ -1,15 +1,14 @@
 import { supabase } from '@/lib/supabaseClient'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
 import Head from 'next/head'
 import { BeatLoader } from 'react-spinners'
 import { ROUTES } from '@/constants/routes'
+import { useFormSubmit } from '@/hooks/useFormSubmit'
 
 export default function Signup() {
   const router = useRouter()
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const { loading, error, setError, executeSubmit } = useFormSubmit()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -20,21 +19,21 @@ export default function Signup() {
     const username = (form.elements.namedItem('username') as HTMLInputElement).value
 
     try {
-      setLoading(true)
-      setError(null)
-      let { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { username },
-        },
+      await executeSubmit(async () => {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { username },
+          },
+        })
+        if (error) throw error
+        if (data?.user?.identities?.length === 0) {
+          setError('User with email already exists')
+        } else {
+          router.push(`/confirm?email=${email}`)
+        }
       })
-      if (error) throw error
-      if (data?.user?.identities?.length === 0) {
-        setError('User with email already exists')
-      } else {
-        router.push(`/confirm?email=${email}`)
-      }
     } catch (e) {
       if (
         e instanceof Error &&
@@ -42,14 +41,7 @@ export default function Signup() {
           'duplicate key value violates unique constraint "profiles_username_key"'
       ) {
         setError('Username is already taken')
-      } else if (e instanceof Error) {
-        console.error(e)
-        setError(e.message)
-      } else {
-        setError('An unknown error occurred')
       }
-    } finally {
-      setLoading(false)
     }
   }
 

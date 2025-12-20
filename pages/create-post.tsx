@@ -12,6 +12,7 @@ import { BeatLoader } from 'react-spinners'
 import { ROUTES } from '@/constants/routes'
 import { GetServerSideProps } from 'next'
 import { Subreddit } from '@/types/models'
+import { useFormSubmit } from '@/hooks/useFormSubmit'
 
 interface SubredditsProps {
   subreddits: Subreddit[]
@@ -31,8 +32,7 @@ export default function CreatePost({ subreddits }: SubredditsProps) {
   const [selected, setSelected] = useState<Subreddit>(subreddits[0])
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [type, setType] = useState<string | string[]>(router.query.type || 'post')
-  const [loading, setLoading] = useState<boolean>(false)
-  const [error, setError] = useState<string | null>(null)
+  const { loading, error, executeSubmit } = useFormSubmit()
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -49,8 +49,8 @@ export default function CreatePost({ subreddits }: SubredditsProps) {
     const title = form.elements.namedItem('title') as HTMLInputElement
     const titleValue = title.value.trim()
 
-    let text
-    let url
+    let text: string | undefined
+    let url: string | undefined
 
     if (type === 'post') {
       const textElement = form.elements.namedItem('text') as HTMLTextAreaElement
@@ -62,9 +62,7 @@ export default function CreatePost({ subreddits }: SubredditsProps) {
       url = linkElement.value.trim()
     }
 
-    try {
-      setLoading(true)
-      setError(null)
+    await executeSubmit(async () => {
       const { data, error } = await supabase
         .from('posts')
         .insert([
@@ -80,16 +78,7 @@ export default function CreatePost({ subreddits }: SubredditsProps) {
         .select()
       if (error) throw error
       router.push(ROUTES.POST(data[0].id))
-    } catch (e) {
-      if (e instanceof Error) {
-        setError(e.message)
-        console.error(e)
-      } else {
-        console.error('An unknown error occurred')
-      }
-    } finally {
-      setLoading(false)
-    }
+    })
   }
 
   const onUpload = (imageUrl: string) => {

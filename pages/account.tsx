@@ -4,6 +4,7 @@ import Head from 'next/head'
 import { GetServerSideProps } from 'next'
 import { useState } from 'react'
 import { User } from '@/types/models'
+import { useFormSubmit } from '@/hooks/useFormSubmit'
 
 interface AccountProps {
   data: User
@@ -38,22 +39,22 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default function Account({ data }: AccountProps) {
   const [profile, setProfile] = useState(data)
-  const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const session = useSession()
   const supabase = useSupabaseClient()
+  const { loading, executeSubmit } = useFormSubmit()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     if (!session) throw new Error('User not signed in.')
 
-    try {
-      setLoading(true)
-      setSuccess(false)
-      const form = e.currentTarget
-      const username = (form.elements.namedItem('username') as HTMLInputElement).value
-      const { data, error } = await supabase
+    setSuccess(false)
+    const form = e.currentTarget
+    const username = (form.elements.namedItem('username') as HTMLInputElement).value
+
+    await executeSubmit(async () => {
+      const { error } = await supabase
         .from('profiles')
         .update({
           username,
@@ -62,11 +63,7 @@ export default function Account({ data }: AccountProps) {
         .eq('id', session.user.id)
       if (error) throw error
       setSuccess(true)
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setLoading(false)
-    }
+    })
   }
 
   return (
